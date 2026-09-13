@@ -199,7 +199,6 @@ class AdminController {
     let moviesCount = 0;
     let teledramasCount = 0;
     let kdramasCount = 0;
-    let seriesCount = 0;
 
     this.catalog.forEach(item => {
       if (item.type === "series") {
@@ -212,7 +211,6 @@ class AdminController {
       else if (item.category === "movies") moviesCount++;
       else if (item.category === "teledramas") teledramasCount++;
       else if (item.category === "kdramas") kdramasCount++;
-      else if (item.category === "cartoon_series") seriesCount++;
     });
 
     const requests = StorageService.getRequests();
@@ -226,7 +224,6 @@ class AdminController {
     if (el("statMovies")) el("statMovies").textContent = moviesCount;
     if (el("statTeledramas")) el("statTeledramas").textContent = teledramasCount;
     if (el("statKdramas")) el("statKdramas").textContent = kdramasCount;
-    if (el("statSeries")) el("statSeries").textContent = seriesCount;
     if (el("statPendingRequests")) el("statPendingRequests").textContent = pendingReqCount;
   }
 
@@ -266,11 +263,10 @@ class AdminController {
     }
 
     const catBadgeMap = {
-      cartoons: { label: "🦁 Cartoon", class: "cat-cartoons" },
-      movies: { label: "🎬 Movie", class: "cat-movies" },
-      teledramas: { label: "📺 Teledrama", class: "cat-teledramas" },
-      kdramas: { label: "🌸 K-Drama", class: "cat-kdramas" },
-      cartoon_series: { label: "⚡ Series", class: "cat-cartoon_series" }
+      cartoons: { label: "🦁 Sinhala Cartoon", class: "cat-cartoons" },
+      movies: { label: "🎬 Sinhala Dubbed Movie", class: "cat-movies" },
+      teledramas: { label: "📺 Sinhala Dubbed Teledrama", class: "cat-teledramas" },
+      kdramas: { label: "🌸 Sinhala Dubbed K-Drama", class: "cat-kdramas" }
     };
 
     this.catalogTableBody.innerHTML = "";

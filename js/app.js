@@ -179,6 +179,7 @@ class SinhalaToonApp {
         e.key === "sinhalaflix_deleted_ids_v1"
       ) {
         this.refreshCatalog();
+        this.initHeroCarousel();
         this.renderCatalog();
         this.renderContinueWatching();
       }
@@ -188,6 +189,7 @@ class SinhalaToonApp {
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
         this.refreshCatalog();
+        this.initHeroCarousel();
         this.renderCatalog();
       }
     });
@@ -201,11 +203,10 @@ class SinhalaToonApp {
 
     const headingsMap = {
       all: "🍿 Sinhala Dubbed Entertainment Universe | සියලුම නිර්මාණ",
-      cartoons: "🦁 Sinhala Dubbed Cartoons | සිංහල හඬකැවූ කාටූන්",
+      cartoons: "🦁 Sinhala Cartoons | සිංහල කාටූන්",
       movies: "🎬 Sinhala Dubbed Movies | සිංහල හඬකැවූ චිත්‍රපට",
-      teledramas: "📺 Sinhala Teledramas | ශ්‍රී ලාංකීය ටෙලි නාට්‍ය",
+      teledramas: "📺 Sinhala Dubbed Teledramas | සිංහල හඬකැවූ ටෙලි නාට්‍ය",
       kdramas: "🌸 Sinhala Dubbed K-Dramas | සිංහල හඬකැවූ කොරියන් නාට්‍ය",
-      cartoon_series: "⚡ Cartoon Series | කාටූන් කතා මාලා",
       watchlist: "❤️ My Watchlist | මගේ නැරඹුම් ලැයිස්තුව",
       continue: "🕒 Continue Watching History | නැවත නරඹන්න"
     };
@@ -233,40 +234,64 @@ class SinhalaToonApp {
   // --- Hero Carousel ---
   initHeroCarousel() {
     if (!this.heroSlideContainer) return;
-    const featuredItems = this.catalog.filter(item => item.isFeatured);
-    if (featuredItems.length === 0) return;
+
+    // 1. Try finding explicitly featured items
+    let featuredItems = (this.catalog || []).filter(item => item && item.isFeatured);
+
+    // 2. If no items have isFeatured (e.g. user added 1 record or custom records), fallback to available catalog items!
+    if (featuredItems.length === 0 && this.catalog && this.catalog.length > 0) {
+      featuredItems = this.catalog.slice(0, 5);
+    }
+
+    const heroSection = document.getElementById("heroBanner");
+
+    // 3. If there are truly no items at all, hide hero section so no blank black box appears
+    if (featuredItems.length === 0) {
+      if (heroSection) heroSection.style.display = "none";
+      return;
+    } else {
+      if (heroSection) heroSection.style.display = "block";
+    }
 
     this.heroSlideContainer.innerHTML = "";
-    if (this.heroIndicatorsContainer) this.heroIndicatorsContainer.innerHTML = "";
+    if (this.heroIndicatorsContainer) {
+      this.heroIndicatorsContainer.innerHTML = "";
+      this.heroIndicatorsContainer.style.display = featuredItems.length > 1 ? "flex" : "none";
+    }
 
     const categoryLabelMap = {
-      cartoons: "🦁 Cartoon",
-      movies: "🎬 Dubbed Movie",
-      teledramas: "📺 Teledrama",
-      kdramas: "🌸 K-Drama",
-      cartoon_series: "⚡ Cartoon Series"
+      cartoons: "🦁 Sinhala Cartoon",
+      movies: "🎬 Sinhala Dubbed Movie",
+      teledramas: "📺 Sinhala Dubbed Teledrama",
+      kdramas: "🌸 Sinhala Dubbed K-Drama"
     };
 
     featuredItems.forEach((item, idx) => {
       const slide = document.createElement("div");
       slide.className = `hero-slide ${idx === 0 ? "active" : ""}`;
       const catLabel = categoryLabelMap[item.category] || "🔥 Featured";
+      const bgImg = item.backdrop || item.poster || "assets/images/banner1.jpg";
+      const safeTitleEn = (item.titleEnglish || "SinhalaFlix").replace(/"/g, "&quot;");
+      const safeTitleSi = item.titleSinhala || "";
+      const yearStr = item.year ? `<span style="font-weight:400; font-size: 0.9em; opacity: 0.85;">${item.year}</span>` : "";
+      const epCount = item.type === "series" ? `${item.episodes ? item.episodes.length : (item.episodesCount || 1)} Episodes` : (item.duration || "Full Movie");
+
       slide.innerHTML = `
         <div class="hero-bg-overlay"></div>
-        <img class="hero-bg-img" src="${item.backdrop || item.poster}" alt="${item.titleEnglish}" />
+        <img class="hero-bg-img" src="${bgImg}" alt="${safeTitleEn}" onerror="this.onerror=null;this.src='assets/images/banner1.jpg'" />
         <div class="hero-content">
           <div class="hero-badges">
             <span class="badge-featured">${catLabel}</span>
-            <span class="badge-channel">${item.channel}</span>
-            <span class="badge-audio">${item.audio}</span>
+            <span class="badge-channel">${item.channel || "HD"}</span>
+            <span class="badge-audio">${item.audio || "Sinhala Dubbed"}</span>
           </div>
-          <h2 class="hero-title">${item.titleEnglish}</h2>
-          <h3 class="hero-subtitle">${item.titleSinhala} • <span style="font-weight:400; font-size: 0.9em; opacity: 0.85;">${item.year}</span></h3>
+          <h2 class="hero-title">${safeTitleEn}</h2>
+          <h3 class="hero-subtitle">${safeTitleSi} ${yearStr ? "• " + yearStr : ""}</h3>
           <div class="hero-meta">
-            <span class="hero-rating">⭐ ${item.rating} / 10</span>
-            <span class="hero-type">${item.type === "series" ? `${item.episodesCount || 12} Episodes` : `${item.duration || "Full Movie"}`}</span>
+            <span class="hero-rating">⭐ ${item.rating || 9.5} / 10</span>
+            <span class="hero-type">${epCount}</span>
           </div>
-          <p class="hero-desc">${item.synopsisEnglish || item.synopsisSinhala}</p>
+          <p class="hero-desc">${item.synopsisEnglish || item.synopsisSinhala || "Enjoy high-quality Sinhala dubbed entertainment."}</p>
           <div class="hero-actions">
             <button class="btn btn-primary btn-lg" onclick="App.watchDirect('${item.id}')">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -284,8 +309,8 @@ class SinhalaToonApp {
       `;
       this.heroSlideContainer.appendChild(slide);
 
-      // Indicator
-      if (this.heroIndicatorsContainer) {
+      // Indicator (only needed if more than 1 item)
+      if (this.heroIndicatorsContainer && featuredItems.length > 1) {
         const ind = document.createElement("button");
         ind.className = `hero-indicator ${idx === 0 ? "active" : ""}`;
         ind.setAttribute("aria-label", `Slide ${idx + 1}`);
@@ -294,11 +319,13 @@ class SinhalaToonApp {
       }
     });
 
+    this.activeHeroSlide = 0;
     this.startHeroAutoSlide(featuredItems.length);
   }
 
   startHeroAutoSlide(total) {
     if (this.heroSlideInterval) clearInterval(this.heroSlideInterval);
+    if (!total || total <= 1) return; // Single item doesn't need auto-sliding!
     this.heroSlideInterval = setInterval(() => {
       this.activeHeroSlide = (this.activeHeroSlide + 1) % total;
       this.updateHeroSlideDOM();
@@ -454,11 +481,10 @@ class SinhalaToonApp {
     }
 
     const catBadgeMap = {
-      cartoons: { label: "🦁 Cartoon", class: "cat-cartoons" },
-      movies: { label: "🎬 Movie", class: "cat-movies" },
-      teledramas: { label: "📺 Teledrama", class: "cat-teledramas" },
-      kdramas: { label: "🌸 K-Drama", class: "cat-kdramas" },
-      cartoon_series: { label: "⚡ Series", class: "cat-cartoon_series" }
+      cartoons: { label: "🦁 Sinhala Cartoon", class: "cat-cartoons" },
+      movies: { label: "🎬 Sinhala Dubbed Movie", class: "cat-movies" },
+      teledramas: { label: "📺 Sinhala Dubbed Teledrama", class: "cat-teledramas" },
+      kdramas: { label: "🌸 Sinhala Dubbed K-Drama", class: "cat-kdramas" }
     };
 
     this.catalogGrid.innerHTML = "";
