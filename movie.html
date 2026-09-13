@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SinhalaFlix Hub | Movie Detail</title>
+  <meta name="description" content="Watch online and download Sinhala dubbed movies, cartoons, K-Dramas and teledramas in 1080p FHD quality." />
+  <meta name="theme-color" content="#080b12" />
+  <meta property="og:type" content="video.movie" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/movie-page.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       STICKY HEADER
+       ══════════════════════════════════════════ -->
+  <header class="mp-header" id="mpHeader">
+    <div class="container">
+      <div class="mp-header-inner">
+
+        <!-- Back Button -->
+        <a href="index.html" class="mp-back-btn" id="btnBackHome">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          <span>Back</span>
+        </a>
+
+        <!-- Sticky Title (visible on scroll) -->
+        <span class="mp-sticky-title" id="mpStickyTitle"></span>
+
+        <!-- Header Actions -->
+        <div class="mp-header-actions">
+          <button class="btn btn-secondary btn-sm mp-watchlist-btn" id="mpHeaderWatchlist" title="Watchlist">
+            <span>🤍</span>
+            <span>Watchlist</span>
+          </button>
+          <button class="btn btn-secondary btn-sm mp-share-btn" id="mpHeaderShare" title="Share">
+            <span>🔗</span>
+            <span>Share</span>
+          </button>
+          <a href="index.html" class="btn btn-primary btn-sm" title="Home">
+            <span>🎬</span>
+            <span>Home</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══════════════════════════════════════════
+         HERO SECTION
+         ══════════════════════════════════════════ -->
+    <section class="mp-hero" id="mpHero">
+      <!-- Blurred backdrop image -->
+      <div class="mp-hero-backdrop" id="heroBackdrop"></div>
+      <!-- Gradient overlay -->
+      <div class="mp-hero-overlay"></div>
+
+      <div class="container">
+        <div class="mp-hero-content">
+
+          <!-- ── Poster Column ── -->
+          <div class="mp-poster-col">
+            <div class="mp-poster-wrapper">
+              <img id="heroPoster" src="assets/images/banner1.jpg" alt="Poster" />
+              <div class="mp-poster-shine"></div>
+            </div>
+          </div>
+
+          <!-- ── Info Column ── -->
+          <div class="mp-info-col">
+
+            <!-- Badges row -->
+            <div class="mp-badges-row">
+              <span class="mp-hero-badge badge-featured" id="itemBadge" style="display:none;"></span>
+              <span class="badge-channel" id="itemChannel">Channel</span>
+              <span class="badge-audio" id="itemAudio">Sinhala Dubbed</span>
+            </div>
+
+            <!-- Titles -->
+            <h1 class="mp-title" id="itemTitleEn">Loading…</h1>
+            <h2 class="mp-title-si" id="itemTitleSi"></h2>
+
+            <!-- Meta row (no rating) -->
+            <div class="mp-meta-row">
+              <span class="mp-meta-item" id="itemYear">📅 —</span>
+              <span class="mp-meta-sep">•</span>
+              <span class="mp-meta-item" id="itemType">—</span>
+            </div>
+
+            <!-- Genre Tags -->
+            <div class="mp-tags" id="itemTags"></div>
+
+            <!-- Synopsis -->
+            <p class="mp-synopsis" id="itemSynopsis"></p>
+            <button class="mp-read-more" id="btnReadMore">Read more ▼</button>
+
+            <!-- Action Buttons -->
+            <div class="mp-action-row">
+              <button class="btn btn-primary btn-lg" id="btnWatchNow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span>Watch Online</span>
+              </button>
+              <button class="btn btn-glass btn-lg" id="btnGoDownload">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                <span>Download</span>
+              </button>
+              <button class="btn btn-secondary btn-lg mp-watchlist-btn" id="mpHeroWatchlist" title="Add to Watchlist">
+                🧑 Watchlist
+              </button>
+              <button class="btn btn-icon btn-lg mp-share-btn" id="mpHeroShare" title="Share">🔗</button>
+            </div>
+
+            <!-- Ad Notice -->
+            <div class="mp-ad-notice">
+              <span class="mp-ad-notice-icon">🚨</span>
+              <div>
+                <strong>වැදගත්:</strong> වෙනත් සයිට් එකකට Redirect වුණොත් 🕒 තත්පර කිහිපයක් රැඳී සිට <strong>Back</strong> වී, 🎬 <strong>Play Button</strong> එක නැවත Click කරන්න.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         INLINE VIDEO PLAYER  (hidden initially)
+         ══════════════════════════════════════════ -->
+    <section class="mp-player-section" id="playerSection" style="display:none;">
+      <div class="container">
+        <div class="mp-player-header">
+          <h3 id="playerSectionTitle">Now Playing</h3>
+          <button class="btn btn-secondary btn-sm" id="btnClosePlayer">✕ Close Player</button>
+        </div>
+
+        <!-- Video element & Google Drive iframe embed -->
+        <div class="mp-player-wrap" id="mpPlayerWrap">
+          <video
+            id="mpVideoPlayer"
+            class="mp-video"
+            controls
+            controlsList="nodownload"
+            oncontextmenu="return false;"
+            playsinline
+            preload="metadata"
+          ></video>
+          <iframe
+            id="mpIframePlayer"
+            class="mp-video-iframe"
+            style="display:none;"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowfullscreen
+          ></iframe>
+          <!-- Shield to hide and block the top-right Google Drive pop-out / download icon -->
+          <div class="mp-iframe-shield" id="mpIframeShield" style="display:none;"></div>
+        </div>
+
+        <!-- Server switcher -->
+        <div class="mp-server-row" id="mpServerRow">
+          <span class="mp-server-label">🚀 Stream Server:</span>
+          <div class="mp-server-btns" id="mpServerBtns">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <!-- Server switch tip -->
+        <div class="mp-server-notice" id="mpServerNotice">
+          <span>💡</span>
+          <div>
+            <strong>Server එක Change කරන්නේ කොහොමද? — How to switch servers?</strong><br />
+            🎬 Video එක Load නොවී Buffering වෙනවා නම්, ඉහළින් තියෙන <strong>“Server 2”</strong> Button එක Click කරන්න.✅
+          </div>
+        </div>
+
+        <!-- Episode quick-selector inside player (series only) -->
+        <div class="mp-ep-selector" id="mpEpSelectorInPlayer" style="display:none;">
+          <h4>📺 Select Episode:</h4>
+          <div class="mp-ep-btns" id="mpEpNumBtns">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         EPISODES GRID  (series only, hidden for movies)
+         ══════════════════════════════════════════ -->
+    <section class="mp-episodes-section" id="episodesSection" style="display:none;">
+      <div class="container">
+        <div class="mp-section-header">
+          <h2>📺 All Episodes</h2>
+          <span class="mp-ep-count-badge" id="epCountBadge"></span>
+        </div>
+        <div class="mp-ep-grid" id="mpEpGrid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ══════════════════════════════════════════
+         RELATED TITLES
+         ══════════════════════════════════════════ -->
+    <section class="mp-related-section" id="relatedSection">
+      <div class="container">
+        <div class="mp-section-header">
+          <h2>🍿 You May Also Like</h2>
+        </div>
+        <div class="mp-related-grid" id="mpRelatedGrid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════ -->
+  <footer class="mp-footer">
+    <div class="container">
+      <div class="mp-footer-inner">
+        <span>© 2026 SinhalaFlix Hub. All Rights Reserved. Made with ❤️ for Sri Lankan Entertainment Lovers.</span>
+        <a href="index.html">← Back to Home</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts with cache busting -->
+  <script src="js/data.js?v=20260913_7"></script>
+  <script src="js/storage.js?v=20260913_7"></script>
+  <script src="js/movie-page.js?v=20260913_7"></script>
+
+  <!-- Enforce 16:9 Backdrop Image for All Episode Cards -->
+  <script>
+    (function () {
+      function apply16x9Backdrop() {
+        var grid = document.getElementById("mpEpGrid");
+        if (!grid) return;
+        var params = new URLSearchParams(window.location.search);
+        var id = params.get("id");
+        if (!id || typeof StorageService === "undefined") return;
+
+        var catalog = StorageService.getFullCatalog();
+        var item = catalog.find(function(c) { return c.id === id; });
+        if (!item) return;
+
+        // Use the 16:9 widescreen backdrop image uploaded in admin panel
+        var img16x9 = (item.backdrop && item.backdrop.trim()) ? item.backdrop.trim() : "";
+        if (!img16x9 && item.episodes && item.episodes[0] && item.episodes[0].thumbnail) {
+          img16x9 = item.episodes[0].thumbnail;
+        }
+
+        var cards = grid.querySelectorAll(".mp-ep-card");
+        cards.forEach(function(card) {
+          if (img16x9) {
+            var img = card.querySelector(".mp-ep-thumb img");
+            if (img) {
+              var currentSrc = img.getAttribute("src");
+              if (currentSrc !== img16x9 && img.src !== img16x9) {
+                img.src = img16x9;
+              }
+            }
+          }
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", apply16x9Backdrop);
+      window.addEventListener("load", apply16x9Backdrop);
+      setTimeout(apply16x9Backdrop, 50);
+      setTimeout(apply16x9Backdrop, 200);
+      setTimeout(apply16x9Backdrop, 500);
+      setTimeout(apply16x9Backdrop, 1200);
+
+      try {
+        var target = document.getElementById("mpEpGrid");
+        if (target && window.MutationObserver) {
+          var obs = new MutationObserver(function() { apply16x9Backdrop(); });
+          obs.observe(target, { childList: true, subtree: true });
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+</body>
+</html>

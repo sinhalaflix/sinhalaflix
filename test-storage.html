@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head><title>Storage Debug Test</title></head>
+<body style="background:#111;color:#eee;font-family:monospace;padding:2rem;">
+  <h2>SinhalaFlix Storage Debug</h2>
+  <pre id="output" style="white-space:pre-wrap;word-break:break-all;max-height:80vh;overflow:auto;"></pre>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script>
+    const log = (msg) => {
+      document.getElementById('output').textContent += msg + '\n';
+    };
+
+    log('=== STORAGE DEBUG TEST ===\n');
+
+    // 1. Check if INITIAL_CATALOG loaded
+    log('1. INITIAL_CATALOG defined: ' + (typeof INITIAL_CATALOG !== 'undefined'));
+    log('   INITIAL_CATALOG length: ' + (typeof INITIAL_CATALOG !== 'undefined' ? INITIAL_CATALOG.length : 'N/A'));
+
+    // 2. Check if StorageService loaded
+    log('\n2. StorageService defined: ' + (typeof StorageService !== 'undefined'));
+
+    // 3. Check custom content in localStorage
+    const customRaw = localStorage.getItem('sinhalaflix_custom_content_v1');
+    log('\n3. Custom content raw key exists: ' + (customRaw !== null));
+    if (customRaw) {
+      try {
+        const parsed = JSON.parse(customRaw);
+        log('   Custom content count: ' + parsed.length);
+        parsed.forEach((item, i) => {
+          log('   [' + i + '] id=' + item.id + ' | title=' + item.titleEnglish + ' | channel=' + JSON.stringify(item.channel) + ' | category=' + item.category);
+        });
+      } catch(e) {
+        log('   ERROR parsing custom content: ' + e.message);
+      }
+    }
+
+    // 4. Check edited content
+    const editedRaw = localStorage.getItem('sinhalaflix_edited_content_v1');
+    log('\n4. Edited content raw key exists: ' + (editedRaw !== null));
+
+    // 5. Check deleted IDs
+    const deletedRaw = localStorage.getItem('sinhalaflix_deleted_ids_v1');
+    log('\n5. Deleted IDs raw key exists: ' + (deletedRaw !== null));
+    if (deletedRaw) {
+      log('   Deleted IDs: ' + deletedRaw);
+    }
+
+    // 6. Full catalog via StorageService
+    const fullCatalog = StorageService.getFullCatalog();
+    log('\n6. Full catalog length: ' + fullCatalog.length);
+    log('   First 5 items:');
+    fullCatalog.slice(0, 5).forEach((item, i) => {
+      log('   [' + i + '] id=' + item.id + ' | title=' + item.titleEnglish + ' | channel=' + JSON.stringify(item.channel));
+    });
+
+    // 7. Check for any custom items in full catalog
+    const customItems = fullCatalog.filter(i => i.id && i.id.startsWith('custom-'));
+    log('\n7. Custom items in full catalog: ' + customItems.length);
+    customItems.forEach((item, i) => {
+      log('   [' + i + '] id=' + item.id + ' | title=' + item.titleEnglish);
+    });
+
+    // 8. Test adding a dummy item
+    log('\n8. TEST: Adding a test item...');
+    const testItem = {
+      id: 'test-debug-' + Date.now(),
+      titleEnglish: 'Debug Test Item',
+      titleSinhala: 'ටෙස්ට්',
+      type: 'series',
+      category: 'cartoons',
+      channel: 'Rupavahini',
+      year: 2024,
+      rating: 9.5,
+      audio: 'Sinhala Dubbed',
+      poster: 'assets/images/banner1.jpg',
+      backdrop: 'assets/images/banner1.jpg',
+      badge: 'Test',
+      director: 'Test',
+      dubTeam: 'Test',
+      synopsisEnglish: 'Test',
+      synopsisSinhala: 'Test',
+      tags: ['cartoons'],
+      isFeatured: false,
+      trending: true,
+      views: '1K',
+      likes: '50',
+      episodes: [{
+        epNumber: 1,
+        titleEnglish: 'Episode 1',
+        titleSinhala: '01 වන කොටස',
+        thumbnail: 'assets/images/banner1.jpg',
+        streamSources: [{server: 'Server 1', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}],
+        downloads: {fhd: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}
+      }],
+      episodesCount: 1
+    };
+    const saved = StorageService.saveCustomContent(testItem);
+    log('   Saved: ' + saved);
+
+    // Re-read
+    const fullCatalog2 = StorageService.getFullCatalog();
+    log('   Full catalog after add: ' + fullCatalog2.length);
+    const found = fullCatalog2.find(i => i.id === testItem.id);
+    log('   Test item found in catalog: ' + !!found);
+
+    // Clean up test item
+    StorageService.deleteContent(testItem.id);
+    log('   Test item cleaned up.');
+
+    log('\n=== ALL localStorage keys ===');
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const val = localStorage.getItem(key);
+      log('   ' + key + ' = ' + (val ? val.substring(0, 100) + (val.length > 100 ? '...' : '') : 'null'));
+    }
+
+    log('\n=== DONE ===');
+  </script>
+</body>
+</html>

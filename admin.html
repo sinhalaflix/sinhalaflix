@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal | SinhalaFlix Content Management</title>
+  <meta name="description" content="SinhalaFlix Content Management System" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* =====================================================================
+       COMPLETE SELF-CONTAINED ADMIN STYLES
+       ===================================================================== */
+    :root {
+      --gold: #f59e0b;
+      --gold-glow: rgba(245, 158, 11, 0.35);
+      --cyan: #06b6d4;
+      --rose: #f43f5e;
+      --emerald: #10b981;
+      --purple: #a855f7;
+      --bg: #060911;
+      --bg2: #0d121f;
+      --card: rgba(18, 24, 40, 0.85);
+      --border: rgba(255,255,255,0.08);
+      --border-focus: rgba(245,158,11,0.5);
+      --text: #f8fafc;
+      --text2: #94a3b8;
+      --text3: #64748b;
+      --r: 12px;
+      --r-sm: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(245,158,11,0.07) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6,182,212,0.07) 0%, transparent 40%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- LOGIN PAGE ---- */
+    #loginPage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 2.75rem 2.25rem;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 40px rgba(245,158,11,0.08);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--cyan), var(--rose));
+    }
+
+    .login-icon {
+      width: 70px; height: 70px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(6,182,212,0.2));
+      border: 1px solid rgba(245,158,11,0.4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      box-shadow: 0 0 24px rgba(245,158,11,0.25);
+    }
+
+    .login-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+      background: linear-gradient(135deg, #fff, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-subtitle {
+      color: var(--text2);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .creds-pill {
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: var(--r-sm);
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: #fbbf24;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .creds-pill code {
+      background: rgba(245,158,11,0.2);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #fde68a;
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(244,63,94,0.15);
+      border: 1px solid rgba(244,63,94,0.4);
+      color: #fda4af;
+      padding: 0.7rem 0.9rem;
+      border-radius: var(--r-sm);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 1.1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 0.45rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-wrap .form-input {
+      padding-right: 2.75rem;
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 0.65rem;
+      background: transparent;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 1.05rem;
+      padding: 0.25rem 0.35rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .toggle-pass-btn:hover {
+      color: var(--gold);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--text2);
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+    }
+
+    .check-row input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 16px; height: 16px;
+    }
+
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      border: none;
+      border-radius: var(--r-sm);
+      color: #0b0f19;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .back-link {
+      display: inline-block;
+      color: var(--text3);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--text2); }
+
+    /* ---- DASHBOARD ---- */
+    #dashboardPage { display: none; flex-direction: column; min-height: 100vh; }
+
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 60px;
+      background: rgba(13,18,31,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .admin-brand span.gold { color: var(--gold); }
+    .admin-badge { background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; border-radius: 4px; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.45rem; margin-left: 0.35rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+    .btn-sm-outline {
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.9rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-sm-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-logout {
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.9rem;
+      background: rgba(244,63,94,0.12);
+      border: 1px solid rgba(244,63,94,0.35);
+      border-radius: var(--r-sm);
+      color: #fda4af;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-logout:hover { background: rgba(244,63,94,0.22); }
+
+    .tabs-bar {
+      display: flex;
+      gap: 0;
+      background: rgba(13,18,31,0.8);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.85rem 1.1rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text3);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .tab-btn:hover { color: var(--text2); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    .admin-main { flex: 1; padding: 1.75rem 1.5rem; max-width: 1300px; margin: 0 auto; width: 100%; }
+
+    /* Section visibility */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap; gap: 0.75rem;
+    }
+
+    .section-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; font-weight: 700; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.25rem 1rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(245,158,11,0.3); transform: translateY(-2px); }
+
+    .stat-icon { font-size: 1.9rem; }
+    .stat-value { font-size: 1.6rem; font-weight: 800; color: var(--gold); }
+    .stat-label { font-size: 0.75rem; color: var(--text3); margin-top: 0.15rem; }
+
+    .dash-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    .btn-dash-primary {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.7rem 1.4rem;
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      border: none;
+      border-radius: var(--r-sm);
+      color: #0b0f19;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(245,158,11,0.35);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-dash-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .btn-dash-secondary {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.7rem 1.4rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .btn-dash-secondary:hover { border-color: rgba(245,158,11,0.4); color: var(--gold); }
+
+    /* Table */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+
+    .table-controls {
+      display: flex; gap: 0.75rem; padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .table-input, .table-select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 0.55rem 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .table-input { flex: 1; min-width: 200px; }
+    .table-select { min-width: 200px; }
+    .table-input:focus, .table-select:focus { border-color: var(--gold); }
+    .table-select option { background: #0d121f; }
+
+    .table-scroll { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: rgba(255,255,255,0.04); }
+    th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.88rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.025); }
+
+    .thumb { width: 44px; height: 60px; object-fit: cover; border-radius: 4px; }
+    .item-title { font-weight: 600; font-size: 0.9rem; }
+    .item-sub { color: var(--text3); font-size: 0.78rem; margin-top: 0.15rem; }
+
+    .badge-cat {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .cat-c { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .cat-m { background: rgba(6,182,212,0.2); color: #67e8f9; }
+    .cat-t { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    .cat-k { background: rgba(168,85,247,0.2); color: #d8b4fe; }
+    .cat-s { background: rgba(244,63,94,0.2); color: #fda4af; }
+
+    .action-btns { display: flex; gap: 0.4rem; }
+    .btn-edit, .btn-del {
+      padding: 0.3rem 0.55rem;
+      border: 1px solid;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-edit { background: rgba(6,182,212,0.1); border-color: rgba(6,182,212,0.3); color: #67e8f9; }
+    .btn-edit:hover { background: rgba(6,182,212,0.2); }
+    .btn-del { background: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.3); color: #fda4af; }
+    .btn-del:hover { background: rgba(244,63,94,0.2); }
+
+    /* Form */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.75rem;
+    }
+
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    @media (max-width: 700px) { .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; } }
+
+    .fg { margin-bottom: 1.1rem; }
+    .fg label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .fg input, .fg select, .fg textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.65rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+    .fg select option { background: #0d121f; }
+
+    .ep-builder { background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--r); padding: 1.25rem; margin-bottom: 1rem; }
+    .ep-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .ep-header h4 { font-size: 0.95rem; font-weight: 700; color: var(--gold); }
+    .ep-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 1rem; margin-bottom: 0.75rem; }
+    .ep-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text2); font-weight: 600; }
+
+    .form-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+
+    /* Requests */
+    .requests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem; }
+    .req-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.25rem; }
+    .req-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .req-title { font-size: 0.95rem; font-weight: 700; }
+    .req-notes { color: var(--text2); font-size: 0.85rem; margin-bottom: 0.85rem; }
+    .req-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text3); margin-bottom: 0.85rem; }
+    .req-actions { display: flex; gap: 0.5rem; justify-content: flex-end; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+
+    /* Database Tab */
+    .db-section { max-width: 700px; }
+    .db-block { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .db-block h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .db-block p { color: var(--text2); font-size: 0.88rem; margin-bottom: 1.1rem; }
+    .btn-danger {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.65rem 1.25rem;
+      background: rgba(244,63,94,0.15);
+      border: 1px solid rgba(244,63,94,0.4);
+      border-radius: var(--r-sm);
+      color: #fda4af;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-danger:hover { background: rgba(244,63,94,0.25); }
+
+    /* GitHub Live Sync styles */
+    .btn-publish-gh {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-publish-gh:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-publish-gh:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .gh-card {
+      border: 1px solid rgba(16, 185, 129, 0.3) !important;
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.04) 0%, rgba(13, 18, 31, 0.8) 100%) !important;
+    }
+    .gh-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .gh-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .gh-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    .gh-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .gh-status-console {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      background: #080c14;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--r-sm);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: #a7f3d0;
+      min-height: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      line-height: 1.4;
+    }
+    .gh-status-console .err { color: #fda4af; }
+    .gh-status-console .info { color: #93c5fd; }
+    .gh-status-console .suc { color: #34d399; font-weight: bold; }
+    .gh-guide-box {
+      margin-top: 1rem;
+      padding: 0.85rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: var(--r-sm);
+      border: 1px dashed var(--border);
+      font-size: 0.8rem;
+      color: var(--text2);
+    }
+    .gh-guide-box ol { margin: 0.5rem 0 0 1.25rem; padding: 0; }
+    .gh-guide-box li { margin-bottom: 0.25rem; }
+
+    /* Upload Zone */
+    .upload-zone {
+      position: relative;
+      border: 2px dashed rgba(245,158,11,0.35);
+      border-radius: var(--r);
+      padding: 1.1rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: rgba(245,158,11,0.04);
+      overflow: hidden;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--gold);
+      background: rgba(245,158,11,0.10);
+    }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-zone-icon { font-size: 1.6rem; margin-bottom: 0.3rem; }
+    .upload-zone-text { font-size: 0.82rem; font-weight: 600; color: var(--text2); }
+    .upload-zone-sub  { font-size: 0.72rem; color: var(--text3); margin-top: 0.2rem; }
+    .upload-zone-preview {
+      margin-top: 0.6rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+      font-size: 0.78rem;
+      color: var(--emerald);
+    }
+    .upload-zone-preview.visible { display: flex; }
+    .upload-zone-preview img { width: 36px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); }
+
+    /* Edit Modal */
+    .modal-bg {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.75rem;
+      width: 100%; max-width: 860px;
+      max-height: 92vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .modal-header h3 { font-size: 1.15rem; font-weight: 700; }
+    .btn-close {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text2);
+      font-size: 1rem; cursor: pointer;
+      padding: 0.25rem 0.6rem;
+      transition: background 0.15s;
+    }
+    .btn-close:hover { background: rgba(255,255,255,0.14); }
+
+    /* Toast */
+    #toastContainer {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      z-index: 9999;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+
+    .toast {
+      background: rgba(13,18,31,0.97);
+      border: 1px solid;
+      border-radius: var(--r-sm);
+      padding: 0.8rem 1.1rem;
+      font-size: 0.88rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      animation: toastIn 0.3s ease;
+      max-width: 340px;
+    }
+    .toast.success { border-color: var(--emerald); color: #6ee7b7; }
+    .toast.error { border-color: var(--rose); color: #fda4af; }
+    .toast.info { border-color: var(--cyan); color: #67e8f9; }
+
+    @keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       LOGIN PAGE
+       ============================================================ -->
+  <div id="loginPage">
+    <div class="login-card">
+      <div class="login-icon">🔐</div>
+      <h1 class="login-title">Admin Control Portal</h1>
+      <p class="login-subtitle">SinhalaFlix Content Management &amp; Studio Database</p>
+
+      <div class="error-box" id="loginError"></div>
+
+      <div class="form-group">
+        <label for="uname">Admin Username</label>
+        <input type="text" id="uname" class="form-input" placeholder="Enter username" autocomplete="username" />
+      </div>
+
+      <div class="form-group">
+        <label for="upass">Password 1 (Primary Key)</label>
+        <div class="input-wrap">
+          <input type="password" id="upass" class="form-input" placeholder="Enter Password 1" autocomplete="current-password" />
+          <button type="button" class="toggle-pass-btn" data-target="upass" title="Toggle Password 1 visibility">👁️</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="upass2">Password 2 (Secondary Key)</label>
+        <div class="input-wrap">
+          <input type="password" id="upass2" class="form-input" placeholder="Enter Password 2" autocomplete="off" />
+          <button type="button" class="toggle-pass-btn" data-target="upass2" title="Toggle Password 2 visibility">👁️</button>
+        </div>
+      </div>
+
+      <label class="check-row">
+        <input type="checkbox" id="rememberChk" checked />
+        <span>Keep me signed in</span>
+      </label>
+
+      <button class="btn-primary" id="loginBtn" type="button">
+        <span>Sign In to Dashboard</span>
+        <span>➔</span>
+      </button>
+
+      <a href="index.html" class="back-link">← Return to Public Website</a>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       DASHBOARD PAGE
+       ============================================================ -->
+  <div id="dashboardPage" style="display:none; flex-direction:column; min-height:100vh;">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <a class="admin-brand" href="index.html">
+        <span>🎬</span>
+        <span>Sinhala<span class="gold">Flix</span></span>
+        <span class="admin-badge">Admin</span>
+      </a>
+      <div class="header-actions">
+        <button class="btn-publish-gh" id="topPublishBtn" title="Push all changes to GitHub so everyone can see them">🚀 Publish to GitHub</button>
+        <a href="index.html" class="btn-sm-outline" target="_blank">🌐 Live Site</a>
+        <button class="btn-logout" id="logoutBtn">🚪 Logout</button>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs-bar">
+      <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+      <button class="tab-btn" data-tab="catalog">🎬 Manage Catalog</button>
+      <button class="tab-btn" data-tab="add">➕ Add Media</button>
+      <button class="tab-btn" data-tab="requests">📬 Viewer Requests</button>
+      <button class="tab-btn" data-tab="database">⚙️ Database &amp; Tools</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+      <!-- TAB: DASHBOARD -->
+      <div class="section active" id="section-dashboard">
+        <div class="section-header">
+          <h2 class="section-title">📊 <span>Platform Overview</span></h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">🎬</div><div><div class="stat-value" id="sTotalTitles">0</div><div class="stat-label">Total Media Titles</div></div></div>
+          <div class="stat-card"><div class="stat-icon">📺</div><div><div class="stat-value" id="sTotalEps">0</div><div class="stat-label">Total Episodes</div></div></div>
+          <div class="stat-card"><div class="stat-icon">🦁</div><div><div class="stat-value" id="sCartoons">0</div><div class="stat-label">Sinhala Cartoons</div></div></div>
+          <div class="stat-card"><div class="stat-icon">🍿</div><div><div class="stat-value" id="sMovies">0</div><div class="stat-label">Dubbed Movies</div></div></div>
+          <div class="stat-card"><div class="stat-icon">📺</div><div><div class="stat-value" id="sTeledramas">0</div><div class="stat-label">Teledramas</div></div></div>
+          <div class="stat-card"><div class="stat-icon">🌸</div><div><div class="stat-value" id="sKdramas">0</div><div class="stat-label">Sinhala K-Dramas</div></div></div>
+          <div class="stat-card"><div class="stat-icon">⚡</div><div><div class="stat-value" id="sSeries">0</div><div class="stat-label">Cartoon Series</div></div></div>
+          <div class="stat-card"><div class="stat-icon">📬</div><div><div class="stat-value" id="sPending">0</div><div class="stat-label">Pending Requests</div></div></div>
+        </div>
+
+        <div class="dash-actions">
+          <button class="btn-dash-primary" onclick="switchTab('add')">➕ Add New Media</button>
+          <button class="btn-dash-secondary" onclick="switchTab('catalog')">🔍 Browse All Records</button>
+        </div>
+      </div>
+
+      <!-- TAB: CATALOG -->
+      <div class="section" id="section-catalog">
+        <div class="section-header">
+          <h2 class="section-title">🎬 <span>Media Catalog Database</span></h2>
+          <button class="btn-dash-primary" onclick="switchTab('add')">➕ Add New Media</button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-controls">
+            <input type="text" id="searchInput" class="table-input" placeholder="🔍 Search title, Sinhala name, channel..." />
+            <select id="catFilter" class="table-select">
+              <option value="all">All Categories</option>
+              <option value="cartoons">🦁 Cartoons (කාටූන්)</option>
+              <option value="movies">🎬 Dubbed Movies (චිත්‍රපට)</option>
+              <option value="teledramas">📺 Teledramas (ටෙලි නාට්‍ය)</option>
+              <option value="kdramas">🌸 K-Dramas (කොරියන් නාට්‍ය)</option>
+              <option value="cartoon_series">⚡ Cartoon Series (කතා මාලා)</option>
+            </select>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title &amp; Name</th>
+                  <th>Category</th>
+                  <th>Network / Channel</th>
+                  <th>Episodes / Year</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="catalogBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: ADD MEDIA -->
+      <div class="section" id="section-add">
+        <div class="section-header">
+          <h2 class="section-title">➕ <span>Add New Media Content</span></h2>
+        </div>
+
+        <div class="form-card">
+          <form id="addMediaForm">
+            <!-- Row: Titles -->
+            <div class="form-grid-2">
+              <div class="fg">
+                <label>Title in English *</label>
+                <input type="text" id="nTitleEn" placeholder="e.g. Soora Pappa / Koombiyo" required />
+              </div>
+              <div class="fg">
+                <label>Sinhala Name *</label>
+                <input type="text" id="nTitleSi" placeholder="e.g. සූර පප්පා / කූඹියෝ" required />
+              </div>
+            </div>
+
+            <!-- Row: Category + Type -->
+            <div class="form-grid-2">
+              <div class="fg">
+                <label>Category *</label>
+                <select id="nCat">
+                  <option value="cartoons">🦁 Sinhala Cartoons</option>
+                  <option value="movies">🎬 Dubbed Movies</option>
+                  <option value="teledramas">📺 Sinhala Teledramas</option>
+                  <option value="kdramas">🌸 Sinhala K-Dramas</option>
+                  <option value="cartoon_series">⚡ Cartoon Series</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Media Format</label>
+                <select id="nType">
+                  <option value="series">Series (Multi-Episode)</option>
+                  <option value="movie">Full Single Movie</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Channel — visible for teledramas & kdramas only -->
+            <div class="fg" id="adminChannelWrapper" style="display:none;">
+              <label>TV Channel / Network</label>
+              <select id="nChannel">
+                <option value="Rupavahini">National Rupavahini</option>
+                <option value="Sirasa TV">Sirasa TV</option>
+                <option value="ITN">ITN</option>
+                <option value="Swarnavahini">Swarnavahini</option>
+                <option value="TV Derana">TV Derana</option>
+                <option value="Hiru TV">Hiru TV</option>
+                <option value="Studio Dub">Studio Dub</option>
+                <option value="YouTube">YouTube</option>
+              </select>
+            </div>
+
+            <!-- Year -->
+            <div class="fg">
+              <label>Release Year</label>
+              <input type="number" id="nYear" value="2024" />
+            </div>
+
+            <!-- Poster & Backdrop — image upload -->
+            <div class="form-grid-2">
+              <div class="fg">
+                <label>🖼 Poster Image</label>
+                <div class="upload-zone" id="nPosterZone">
+                  <input type="file" id="nPosterFile" accept="image/*" />
+                  <div class="upload-zone-icon">🖼️</div>
+                  <div class="upload-zone-text">Click or Drag &amp; Drop Poster</div>
+                  <div class="upload-zone-sub">Portrait · 2:3 ratio recommended</div>
+                  <div class="upload-zone-preview" id="nPosterPreview"><img id="nPosterPreviewImg" src="" alt="" /><span id="nPosterPreviewName"></span></div>
+                </div>
+                <input type="hidden" id="nPoster" value="assets/images/banner1.jpg" />
+              </div>
+              <div class="fg">
+                <label>🖼 Backdrop / Hero Banner</label>
+                <div class="upload-zone" id="nBackdropZone">
+                  <input type="file" id="nBackdropFile" accept="image/*" />
+                  <div class="upload-zone-icon">🌅</div>
+                  <div class="upload-zone-text">Click or Drag &amp; Drop Backdrop</div>
+                  <div class="upload-zone-sub">Landscape · 16:9 ratio recommended</div>
+                  <div class="upload-zone-preview" id="nBackdropPreview"><img id="nBackdropPreviewImg" src="" alt="" /><span id="nBackdropPreviewName"></span></div>
+                </div>
+                <input type="hidden" id="nBackdrop" value="assets/images/banner1.jpg" />
+              </div>
+            </div>
+
+            <div class="fg">
+              <label>English Synopsis *</label>
+              <textarea id="nSynEn" rows="3" placeholder="Story summary and plot description..." required></textarea>
+            </div>
+
+            <div class="fg">
+              <label>Sinhala Synopsis (Optional)</label>
+              <textarea id="nSynSi" rows="2" placeholder="සිංහලෙන් කතාවේ සාරාංශය..."></textarea>
+            </div>
+
+            <div style="margin-bottom:1.25rem;">
+              <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;color:var(--gold);font-size:.9rem;font-weight:600;">
+                <input type="checkbox" id="nFeatured" /> Feature in Hero Carousel Banner
+              </label>
+            </div>
+
+            <!-- Episode Builder -->
+            <div class="ep-builder" id="epBuilder">
+              <div class="ep-header">
+                <h4>📺 Episode List Builder</h4>
+                <button type="button" class="btn-dash-secondary" id="addEpBtn" style="padding:.4rem .85rem;font-size:.82rem;">➕ Add Episode</button>
+              </div>
+              <div id="epList"></div>
+            </div>
+
+            <!-- Movie fields -->
+            <div id="adminMovieFields" style="display:none;">
+              <div style="font-weight:700;color:var(--gold);margin-bottom:0.65rem;font-size:0.9rem;">🎬 Movie Links</div>
+              <div class="form-grid-2">
+                <div class="fg">
+                  <label>Watch — Server 1 (Google Drive)</label>
+                  <input type="url" id="nMovieStreamGd" placeholder="https://drive.google.com/..." />
+                </div>
+                <div class="fg">
+                  <label>Watch — Server 2 (Stream / Embed)</label>
+                  <input type="url" id="nMovieStreamBuzz" placeholder="https://... (Direct Stream / Embed URL)" />
+                  <small style="font-size:0.72rem;color:var(--muted);margin-top:0.25rem;display:block;">💡 Paste any Stream / Embed URL (Google Drive, Filemoon, VidHide, etc.) or direct video link (MP4). For Buzzheavier, you can paste the direct stream link (ts.buzzheavier.com/d/...) or enter it in Download.</small>
+                </div>
+              </div>
+              <div class="form-grid-2" style="margin-top:0.75rem;">
+                <div class="fg">
+                  <label>Download — Server 1 (Google Drive)</label>
+                  <input type="url" id="nMovieDlGd" placeholder="https://drive.google.com/..." />
+                </div>
+                <div class="fg">
+                  <label>Download — Server 2 (Cloud Mirror)</label>
+                  <input type="url" id="nMovieDlBuzz" placeholder="https://... (Direct / Mirror Download URL)" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-dash-secondary" onclick="switchTab('catalog')">Cancel</button>
+              <button type="submit" class="btn-dash-primary">💾 Save to Live Catalog</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB: REQUESTS -->
+      <div class="section" id="section-requests">
+        <div class="section-header">
+          <h2 class="section-title">📬 <span>Incoming Viewer Requests</span></h2>
+        </div>
+        <div class="requests-grid" id="requestsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- TAB: SETTINGS (Monetag Ads) -->
+      <div class="section" id="section-settings">
+        <div class="section-header">
+          <h2 class="section-title">⚙️ <span>Site Settings</span></h2>
+        </div>
+        <div class="form-card">
+          <p style="color:var(--text2);font-size:0.9rem;margin-bottom:1.5rem;">Configure your Monetag ad script URLs. These will fire automatically when users click <strong>Watch Online</strong> or <strong>Download</strong> buttons.</p>
+          <div class="fg">
+            <label>Monetag Ad Script 1 URL</label>
+            <input type="url" id="monetagAd1" placeholder="https://...monetag.com/..." style="width:100%;" />
+          </div>
+          <div class="fg">
+            <label>Monetag Ad Script 2 URL</label>
+            <input type="url" id="monetagAd2" placeholder="https://...monetag.com/..." style="width:100%;" />
+          </div>
+          <button class="btn-dash-primary" id="saveSettingsBtn" style="max-width:280px;">💾 Save Ad Settings</button>
+          <p id="settingsSavedMsg" style="display:none;color:#6ee7b7;font-size:0.85rem;margin-top:0.75rem;">✅ Settings saved!</p>
+        </div>
+      </div>
+
+      <!-- TAB: DATABASE -->
+      <div class="section" id="section-database">
+        <div class="section-header">
+          <h2 class="section-title">⚙️ <span>Database &amp; Backup Tools</span></h2>
+        </div>
+
+        <div class="db-section">
+          <!-- GitHub Pages Live Sync -->
+          <div class="db-block gh-card" id="ghSyncCard">
+            <div class="gh-header-row">
+              <div>
+                <h3 style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+                  🚀 GitHub Pages Live Sync (සියලුම Devices වලට Update කරන්න)
+                </h3>
+                <p style="margin-bottom:0;">
+                  ඔබ Admin Panel එකෙන් Add හෝ Edit කරන Movies, Series සහ Episodes අනෙකුත් සියලුම Users ලාට සහ Devices වලට GitHub Pages හරහා එක ක්ලික් එකකින් Live කරන්න.
+                </p>
+              </div>
+              <span class="gh-badge">● One-Click Live Deploy</span>
+            </div>
+
+            <div class="gh-grid">
+              <div class="fg" style="margin-bottom:0;">
+                <label style="font-size:0.8rem;">GitHub Username / Owner *</label>
+                <input type="text" id="ghOwner" placeholder="e.g. your-github-username" />
+              </div>
+              <div class="fg" style="margin-bottom:0;">
+                <label style="font-size:0.8rem;">Repository Name *</label>
+                <input type="text" id="ghRepo" placeholder="e.g. sinhalaflix" />
+              </div>
+              <div class="fg" style="margin-bottom:0;">
+                <label style="font-size:0.8rem;">Branch Name</label>
+                <input type="text" id="ghBranch" placeholder="main" value="main" />
+              </div>
+              <div class="fg" style="margin-bottom:0;">
+                <label style="font-size:0.8rem;">GitHub Personal Access Token (PAT) *</label>
+                <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="gh-actions-bar">
+              <button class="btn-dash-primary" id="saveGhConfigBtn" style="padding:0.6rem 1.1rem;font-size:0.85rem;">
+                💾 Save GitHub Settings
+              </button>
+              <button class="btn-publish-gh" id="publishGhBtn" style="padding:0.6rem 1.25rem;font-size:0.88rem;">
+                🚀 Commit &amp; Publish to GitHub Now
+              </button>
+              <button class="btn-dash-secondary" id="downloadDataJsBtn" style="padding:0.6rem 1.1rem;font-size:0.85rem;" title="Download js/data.js directly without GitHub Token">
+                ⬇️ Download updated data.js (Manual)
+              </button>
+            </div>
+
+            <div class="gh-status-console" id="ghSyncConsole">
+              <span class="info">ℹ️ Ready. Enter your GitHub Repository details and click "Publish to GitHub Now" to sync your site across all devices.</span>
+            </div>
+
+            <div class="gh-guide-box">
+              <strong style="color:var(--gold);">🔑 How to get a GitHub Personal Access Token (Free &amp; 1-minute):</strong>
+              <ol>
+                <li>Go to GitHub: <strong>Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> (or <a href="https://github.com/settings/tokens" target="_blank" style="color:#38bdf8;text-decoration:underline;">click here</a>).</li>
+                <li>Click <strong>"Generate new token (classic)"</strong>.</li>
+                <li>Set Note: <code>SinhalaFlix Admin</code> and check the <strong><code>repo</code></strong> checkbox (Full control of private/public repositories).</li>
+                <li>Click <strong>Generate token</strong>, copy the generated token (starts with <code>ghp_</code>), and paste it above.</li>
+                <li>Your token is safely stored only inside your browser's private storage on this device.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="db-block">
+            <h3>💾 Export / Backup Catalog Data</h3>
+            <p>Export the complete SinhalaFlix database (including custom uploads, edits) as a JSON file.</p>
+            <button class="btn-dash-primary" id="exportBtn">💾 Export Database JSON</button>
+          </div>
+
+          <div class="db-block">
+            <h3>📥 Import / Restore JSON Backup</h3>
+            <p>Restore media records from a previously exported backup file.</p>
+            <input type="file" id="importFileInput" accept=".json" style="display:none;" />
+            <button class="btn-dash-secondary" id="importBtn">📥 Choose JSON File to Import</button>
+          </div>
+
+          <div class="db-block">
+            <h3 style="color:#fda4af;">⚠️ Factory Reset Catalog</h3>
+            <p>Clear all local custom additions and modifications, restoring the default SinhalaFlix library.</p>
+            <button class="btn-danger" id="resetBtn">🔄 Reset to Default Catalog</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ============================================================
+       EDIT MODAL
+       ============================================================ -->
+  <div class="modal-bg" id="editModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>✏️ Edit Media Record</h3>
+        <button class="btn-close" id="closeEditBtn">✕</button>
+      </div>
+      <form id="editForm">
+
+        <!-- Row: Titles -->
+        <div class="form-grid-2">
+          <div class="fg">
+            <label>Title in English *</label>
+            <input type="text" id="eTitleEn" placeholder="e.g. Soora Pappa / Koombiyo" required />
+          </div>
+          <div class="fg">
+            <label>Sinhala Name *</label>
+            <input type="text" id="eTitleSi" placeholder="e.g. සූර පප්පා / කූඹියෝ" required />
+          </div>
+        </div>
+
+        <!-- Row: Category + Type -->
+        <div class="form-grid-2">
+          <div class="fg">
+            <label>Category *</label>
+            <select id="eCat">
+              <option value="cartoons">🦁 Sinhala Cartoons</option>
+              <option value="movies">🎬 Dubbed Movies</option>
+              <option value="teledramas">📺 Sinhala Teledramas</option>
+              <option value="kdramas">🌸 Sinhala K-Dramas</option>
+              <option value="cartoon_series">⚡ Cartoon Series</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Media Format</label>
+            <select id="eType">
+              <option value="series">Series (Multi-Episode)</option>
+              <option value="movie">Full Single Movie</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Channel — visible for teledramas & kdramas only -->
+        <div class="fg" id="editChannelWrapper" style="display:none;">
+          <label>TV Channel / Network</label>
+          <select id="eChannel">
+            <option value="Rupavahini">National Rupavahini</option>
+            <option value="Sirasa TV">Sirasa TV</option>
+            <option value="ITN">ITN</option>
+            <option value="Swarnavahini">Swarnavahini</option>
+            <option value="TV Derana">TV Derana</option>
+            <option value="Hiru TV">Hiru TV</option>
+            <option value="Studio Dub">Studio Dub</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Independent">Independent</option>
+          </select>
+        </div>
+
+        <!-- Row: Year & Rating -->
+        <div class="form-grid-2">
+          <div class="fg">
+            <label>Release Year</label>
+            <input type="number" id="eYear" value="2024" />
+          </div>
+          <div class="fg">
+            <label>IMDb / User Rating (1.0 - 10.0)</label>
+            <input type="number" id="eRating" step="0.1" min="1" max="10" value="9.5" />
+          </div>
+        </div>
+
+        <!-- Poster & Backdrop image upload -->
+        <div class="form-grid-2">
+          <div class="fg">
+            <label>🖼 Poster Image</label>
+            <div class="upload-zone" id="ePosterZone">
+              <input type="file" id="ePosterFile" accept="image/*" />
+              <div class="upload-zone-icon">🖼️</div>
+              <div class="upload-zone-text">Click or Drag &amp; Drop Poster</div>
+              <div class="upload-zone-sub">Portrait · 2:3 ratio recommended</div>
+              <div class="upload-zone-preview" id="ePosterPreview"><img id="ePosterPreviewImg" src="" alt="" /><span id="ePosterPreviewName"></span></div>
+            </div>
+            <input type="hidden" id="ePosterHidden" value="assets/images/banner1.jpg" />
+          </div>
+          <div class="fg">
+            <label>🖼 Backdrop / Hero Banner</label>
+            <div class="upload-zone" id="eBackdropZone">
+              <input type="file" id="eBackdropFile" accept="image/*" />
+              <div class="upload-zone-icon">🌅</div>
+              <div class="upload-zone-text">Click or Drag &amp; Drop Backdrop</div>
+              <div class="upload-zone-sub">Landscape · 16:9 ratio recommended</div>
+              <div class="upload-zone-preview" id="eBackdropPreview"><img id="eBackdropPreviewImg" src="" alt="" /><span id="eBackdropPreviewName"></span></div>
+            </div>
+            <input type="hidden" id="eBackdropHidden" value="assets/images/banner1.jpg" />
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>English Synopsis *</label>
+          <textarea id="eSynEn" rows="3" placeholder="Story summary and plot description..."></textarea>
+        </div>
+
+        <div class="fg">
+          <label>Sinhala Synopsis (Optional)</label>
+          <textarea id="eSynSi" rows="2" placeholder="සිංහලෙන් කතාවේ සාරාංශය..."></textarea>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;color:var(--gold);font-size:.9rem;font-weight:600;">
+            <input type="checkbox" id="eFeatured" /> Feature in Hero Carousel Banner
+          </label>
+        </div>
+
+        <!-- Episode Builder -->
+        <div class="ep-builder" id="editEpBuilder">
+          <div class="ep-header">
+            <h4>📺 Episode List Builder</h4>
+            <button type="button" class="btn-dash-secondary" id="editAddEpBtn" style="padding:.4rem .85rem;font-size:.82rem;">➕ Add Episode</button>
+          </div>
+          <div id="editEpList"></div>
+        </div>
+
+        <!-- Movie fields -->
+        <div id="editMovieFields" style="display:none;">
+          <div style="font-weight:700;color:var(--gold);margin-bottom:0.65rem;font-size:0.9rem;">🎬 Movie Links</div>
+          <div class="form-grid-2">
+            <div class="fg">
+              <label>Watch — Server 1 (Google Drive)</label>
+              <input type="url" id="eMovieStreamGd" placeholder="https://drive.google.com/..." />
+            </div>
+            <div class="fg">
+              <label>Watch — Server 2 (Stream / Embed)</label>
+              <input type="url" id="eMovieStreamBuzz" placeholder="https://... (Direct Stream / Embed URL)" />
+              <small style="font-size:0.72rem;color:var(--muted);margin-top:0.25rem;display:block;">💡 Paste any Stream / Embed URL (Google Drive, Filemoon, VidHide, etc.) or direct video link (MP4). For Buzzheavier, you can paste the direct stream link (ts.buzzheavier.com/d/...) or enter it in Download.</small>
+            </div>
+          </div>
+          <div class="form-grid-2" style="margin-top:0.75rem;">
+            <div class="fg">
+              <label>Download — Server 1 (Google Drive)</label>
+              <input type="url" id="eMovieDlGd" placeholder="https://drive.google.com/..." />
+            </div>
+            <div class="fg">
+              <label>Download — Server 2 (Cloud Mirror)</label>
+              <input type="url" id="eMovieDlBuzz" placeholder="https://... (Direct / Mirror Download URL)" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-dash-secondary" id="cancelEditBtn">Cancel</button>
+          <button type="submit" class="btn-dash-primary">✅ Update Media</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Scripts: load order matters -->
+  <script src="js/data.js?v=20260913_7"></script>
+  <script src="js/storage.js?v=20260913_7"></script>
+  <script>
+    // ============================================================
+    //  INLINE ADMIN CONTROLLER — no separate file dependency
+    //  Runs after DOM is fully parsed (scripts are at end of body)
+    // ============================================================
+
+    (function () {
+      "use strict";
+
+      // ---- State ----
+      var currentEditId = null;
+      var catFilterVal  = "all";
+      var searchQuery   = "";
+
+      // ---- Auth helpers ----
+      function isLoggedIn() {
+        try {
+          return localStorage.getItem("sfx_admin_v2") === "true" ||
+                 sessionStorage.getItem("sfx_admin_v2") === "true";
+        } catch (e) { return false; }
+      }
+
+      function doLogin(user, pass1, pass2, remember) {
+        var u = (user || "").trim().toLowerCase();
+        var p1 = (pass1 || "").trim();
+        var p2 = (pass2 || "").trim();
+        var validUser = (u === "sinhalaflix2006");
+        var validPass1 = (p1 === "sinhalaflix@20061679");
+        var validPass2 = (p2 === "rivindu@20061679");
+
+        if (validUser && validPass1 && validPass2) {
+          try {
+            if (remember) {
+              localStorage.setItem("sfx_admin_v2", "true");
+              localStorage.setItem("sinhalaflix_admin_authenticated", "true");
+            }
+            sessionStorage.setItem("sfx_admin_v2", "true");
+            sessionStorage.setItem("sinhalaflix_admin_authenticated", "true");
+          } catch(e) {}
+          return true;
+        }
+        return false;
+      }
+
+      function doLogout() {
+        try {
+          localStorage.removeItem("sfx_admin_v2");
+          localStorage.removeItem("sinhalaflix_admin_authenticated");
+          sessionStorage.removeItem("sfx_admin_v2");
+          sessionStorage.removeItem("sinhalaflix_admin_authenticated");
+        } catch(e) {}
+      }
+
+      // ---- UI switching ----
+      function showLogin() {
+        document.getElementById("loginPage").style.display = "flex";
+        document.getElementById("dashboardPage").style.display = "none";
+      }
+
+      function showDashboard() {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboardPage").style.display = "flex";
+        renderStats();
+        renderCatalog();
+        renderRequests();
+      }
+
+      function switchTab(tabId) {
+        document.querySelectorAll(".tab-btn").forEach(function(b) {
+          b.classList.toggle("active", b.dataset.tab === tabId);
+        });
+        document.querySelectorAll(".section").forEach(function(s) {
+          s.classList.toggle("active", s.id === "section-" + tabId);
+        });
+        if (tabId === "catalog") renderCatalog();
+        else if (tabId === "dashboard") renderStats();
+        else if (tabId === "requests") renderRequests();
+        else if (tabId === "database") loadGhConfig();
+      }
+
+      // Expose switchTab globally (used by inline onclick)
+      window.switchTab = switchTab;
+
+      // ---- Stats ----
+      function getFullCatalog() {
+        if (typeof StorageService !== "undefined" && StorageService.getFullCatalog) {
+          return StorageService.getFullCatalog();
+        }
+        return typeof INITIAL_CATALOG !== "undefined" ? INITIAL_CATALOG : [];
+      }
+
+      function getRequests() {
+        if (typeof StorageService !== "undefined" && StorageService.getRequests) {
+          return StorageService.getRequests();
+        }
+        return [];
+      }
+
+      function renderStats() {
+        var catalog = getFullCatalog();
+        var counts  = { cartoons:0, movies:0, teledramas:0, kdramas:0, cartoon_series:0, eps:0 };
+        catalog.forEach(function(item) {
+          counts[item.category] = (counts[item.category] || 0) + 1;
+          counts.eps += item.type === "series" ? (item.episodes ? item.episodes.length : item.episodesCount || 1) : 1;
+        });
+        var reqs = getRequests();
+        var pending = reqs.filter(function(r){ return r.status === "pending"; }).length;
+
+        function set(id, v){ var el = document.getElementById(id); if(el) el.textContent = v; }
+        set("sTotalTitles", catalog.length);
+        set("sTotalEps",    counts.eps);
+        set("sCartoons",    counts.cartoons    || 0);
+        set("sMovies",      counts.movies      || 0);
+        set("sTeledramas",  counts.teledramas  || 0);
+        set("sKdramas",     counts.kdramas     || 0);
+        set("sSeries",      counts.cartoon_series || 0);
+        set("sPending",     pending);
+      }
+
+      // ---- Catalog Table ----
+      var catBadgeMap = {
+        cartoons:       { label:"🦁 Cartoon",   cls:"cat-c" },
+        movies:         { label:"🎬 Movie",      cls:"cat-m" },
+        teledramas:     { label:"📺 Teledrama",  cls:"cat-t" },
+        kdramas:        { label:"🌸 K-Drama",    cls:"cat-k" },
+        cartoon_series: { label:"⚡ Series",     cls:"cat-s" }
+      };
+
+      function renderCatalog() {
+        var tbody = document.getElementById("catalogBody");
+        if (!tbody) return;
+
+        var catalog = getFullCatalog();
+
+        if (catFilterVal !== "all") {
+          catalog = catalog.filter(function(i){ return i.category === catFilterVal; });
+        }
+
+        if (searchQuery) {
+          var q = searchQuery;
+          catalog = catalog.filter(function(i){
+            return (i.titleEnglish  && i.titleEnglish.toLowerCase().includes(q)) ||
+                   (i.titleSinhala  && i.titleSinhala.toLowerCase().includes(q)) ||
+                   (i.channel       && i.channel.toLowerCase().includes(q));
+          });
+        }
+
+        if (catalog.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text3);">No media found matching criteria.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = "";
+        catalog.forEach(function(item, idx) {
+          var info = catBadgeMap[item.category] || { label: item.category, cls: "cat-c" };
+          var epStr = item.type === "series" ? ((item.episodes ? item.episodes.length : item.episodesCount || 1) + " Ep") : "1 Movie";
+          var tr = document.createElement("tr");
+          var safe = function(s){ return String(s || "").replace(/'/g,"&#39;"); };
+          tr.innerHTML = [
+            '<td style="color:var(--text3);font-size:.8rem;">#'+(idx+1)+'</td>',
+            '<td><div style="display:flex;align-items:center;gap:.65rem;">',
+            '<img class="thumb" src="'+safe(item.poster)+'" alt="'+safe(item.titleEnglish)+'" onerror="this.src=\'assets/images/banner1.jpg\'" />',
+            '<div><div class="item-title">'+safe(item.titleEnglish)+'</div><div class="item-sub">'+safe(item.titleSinhala)+'</div></div>',
+            '</div></td>',
+            '<td><span class="badge-cat '+info.cls+'">'+info.label+'</span></td>',
+            '<td style="color:#38bdf8;font-weight:600;">'+safe(item.channel || '—')+'</td>',
+            '<td>'+epStr+' ('+safe(item.year)+')</td>',
+            '<td><div class="action-btns">',
+            '<button class="btn-edit" data-id="'+safe(item.id)+'" onclick="openEdit(\''+safe(item.id)+'\')">✏️ Edit</button>',
+            '<button class="btn-del"  data-id="'+safe(item.id)+'" data-title="'+safe(item.titleEnglish)+'" onclick="deleteItem(\''+safe(item.id)+'\',\''+safe(item.titleEnglish)+'\')">🗑️ Del</button>',
+            '</div></td>'
+          ].join("");
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Catalog body delegation for edit/delete buttons
+      var catTableBody = document.getElementById("catalogBody");
+      if (catTableBody) {
+        catTableBody.addEventListener("click", function(e) {
+          var editBtn = e.target.closest(".btn-edit");
+          if (editBtn && editBtn.dataset.id) {
+            window.openEdit(editBtn.dataset.id);
+            return;
+          }
+          var delBtn = e.target.closest(".btn-del");
+          if (delBtn && delBtn.dataset.id) {
+            window.deleteItem(delBtn.dataset.id, delBtn.dataset.title || "");
+            return;
+          }
+        });
+      }
+
+      // ---- Edit modal type/category visibility ----
+      var TV_CHANNEL_CATS = new Set(["teledramas", "kdramas"]);
+
+      function updateEditTypeVis() {
+        var isSeries = document.getElementById("eType").value === "series";
+        document.getElementById("editEpBuilder").style.display = isSeries ? "block" : "none";
+        var emf = document.getElementById("editMovieFields");
+        if (emf) emf.style.display = isSeries ? "none" : "block";
+      }
+      function updateEditCatVis() {
+        var cat = document.getElementById("eCat").value;
+        var ecw = document.getElementById("editChannelWrapper");
+        if (ecw) {
+          ecw.style.display = TV_CHANNEL_CATS.has(cat) ? "block" : "none";
+        }
+      }
+
+      document.getElementById("eType").addEventListener("change", updateEditTypeVis);
+      document.getElementById("eCat").addEventListener("change",  updateEditCatVis);
+
+      // Add episode in edit modal
+      document.getElementById("editAddEpBtn").addEventListener("click", function() {
+        addEpisodeRow(document.getElementById("editEpList"));
+      });
+
+      function extractStreamSource(sources, serverName, keyword, fallbackIdx) {
+        if (!sources || !Array.isArray(sources)) return "";
+        var match = sources.find(function(s) {
+          return s && s.server && s.server.toLowerCase().indexOf(serverName.toLowerCase()) !== -1;
+        });
+        if (match && match.url) return match.url;
+        if (keyword) {
+          var matchKw = sources.find(function(s) {
+            return s && s.url && s.url.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+          });
+          if (matchKw && matchKw.url) return matchKw.url;
+        }
+        return (sources[fallbackIdx] && sources[fallbackIdx].url) || "";
+      }
+
+
+
+      // Expose for inline onclick and direct call
+      window.openEdit = function(id) {
+        try {
+          var catalog = getFullCatalog();
+          var item = catalog.find(function(c){ return c.id === id; });
+          if (!item) {
+            console.warn("Item not found for edit:", id);
+            toast("Item not found: " + id, "error");
+            return;
+          }
+          currentEditId = id;
+
+          // Basic fields
+          document.getElementById("eTitleEn").value     = item.titleEnglish  || "";
+          document.getElementById("eTitleSi").value     = item.titleSinhala  || "";
+          document.getElementById("eCat").value         = item.category      || "cartoons";
+          document.getElementById("eType").value        = item.type          || "series";
+          
+          var chanSelect = document.getElementById("eChannel");
+          if (chanSelect && item.channel) {
+            var exists = Array.from(chanSelect.options).some(function(opt) { return opt.value === item.channel; });
+            if (!exists) {
+              var opt = document.createElement("option");
+              opt.value = item.channel;
+              opt.textContent = item.channel;
+              chanSelect.appendChild(opt);
+            }
+            chanSelect.value = item.channel;
+          }
+
+          document.getElementById("eYear").value        = item.year          || 2024;
+          var ratEl = document.getElementById("eRating");
+          if (ratEl) ratEl.value = (item.rating != null) ? item.rating : 9.5;
+          document.getElementById("ePosterHidden").value  = item.poster      || "assets/images/banner1.jpg";
+          document.getElementById("eBackdropHidden").value = item.backdrop   || item.poster || "assets/images/banner1.jpg";
+          document.getElementById("eSynEn").value       = item.synopsisEnglish || "";
+          document.getElementById("eSynSi").value       = item.synopsisSinhala || "";
+          document.getElementById("eFeatured").checked  = !!item.isFeatured;
+          
+          // Reset file inputs
+          document.getElementById("ePosterFile").value  = "";
+          document.getElementById("eBackdropFile").value = "";
+
+          // Populate existing image previews
+          var prevPostImg = document.getElementById("ePosterPreviewImg");
+          var prevPostName = document.getElementById("ePosterPreviewName");
+          var prevPostBox = document.getElementById("ePosterPreview");
+          if (prevPostImg && item.poster) {
+            prevPostImg.src = item.poster;
+            if (prevPostName) prevPostName.textContent = "Current: " + (item.poster.length > 28 ? item.poster.substring(0, 28) + "..." : item.poster);
+            if (prevPostBox) prevPostBox.classList.add("visible");
+          } else if (prevPostBox) {
+            prevPostBox.classList.remove("visible");
+          }
+
+          var prevBackImg = document.getElementById("eBackdropPreviewImg");
+          var prevBackName = document.getElementById("eBackdropPreviewName");
+          var prevBackBox = document.getElementById("eBackdropPreview");
+          var backUrl = item.backdrop || item.poster;
+          if (prevBackImg && backUrl) {
+            prevBackImg.src = backUrl;
+            if (prevBackName) prevBackName.textContent = "Current: " + (backUrl.length > 28 ? backUrl.substring(0, 28) + "..." : backUrl);
+            if (prevBackBox) prevBackBox.classList.add("visible");
+          } else if (prevBackBox) {
+            prevBackBox.classList.remove("visible");
+          }
+
+          // Populate episode list
+          var epListEl = document.getElementById("editEpList");
+          epListEl.innerHTML = "";
+          if (item.type === "series" && item.episodes && item.episodes.length) {
+            item.episodes.forEach(function(ep) { addEditEpisodeRow(epListEl, ep); });
+          } else if (item.type !== "series") {
+            // Movie links
+            var firstEp = item.episodes && item.episodes[0];
+            var mSources = (firstEp && firstEp.streamSources) || item.streamSources || [];
+            var src1 = extractStreamSource(mSources, "Server 1", "drive", 0);
+            var src2 = extractStreamSource(mSources, "Server 2", "buzz", 1);
+
+            var dl = (firstEp && firstEp.downloads) || item.downloads || {};
+            var dlgd   = dl.gdrive || "";
+            var dlbuzz = dl.buzz || "";
+
+            document.getElementById("eMovieStreamGd").value    = src1;
+            document.getElementById("eMovieStreamBuzz").value  = src2;
+            document.getElementById("eMovieDlGd").value        = dlgd;
+            document.getElementById("eMovieDlBuzz").value      = dlbuzz;
+          }
+
+          // Update visibility
+          updateEditTypeVis();
+          updateEditCatVis();
+
+          document.getElementById("editModal").classList.add("open");
+        } catch (err) {
+          console.error("Failed to open edit modal:", err);
+          toast("Failed to open edit window: " + err.message, "error");
+        }
+      };
+
+      window.deleteItem = function(id, title) {
+        if (!confirm('Delete "' + title + '" from the database?')) return;
+        if (typeof StorageService !== "undefined") StorageService.deleteContent(id);
+        toast("Deleted: " + title, "info");
+        renderCatalog();
+        renderStats();
+      };
+
+      // ---- Requests ----
+      function renderRequests() {
+        var grid = document.getElementById("requestsGrid");
+        if (!grid) return;
+        var list = getRequests();
+
+        if (list.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2.5rem;background:var(--card);border-radius:var(--r);color:var(--text3);"><h3>No Viewer Requests Yet</h3><p style="margin-top:.5rem;">Requests from the public site will appear here.</p></div>';
+          return;
+        }
+
+        grid.innerHTML = "";
+        list.forEach(function(req) {
+          var isResolved = req.status === "completed";
+          var card = document.createElement("div");
+          card.className = "req-card";
+          card.innerHTML = [
+            '<div class="req-card-header">',
+            '<div class="req-title">'+escHtml(req.title)+'</div>',
+            '<span class="badge-cat '+(isResolved?"cat-t":"cat-k")+'">'+(isResolved?"✅ Fulfilled":"⏳ Pending")+'</span>',
+            '</div>',
+            '<div class="req-notes">'+escHtml(req.notes || "No additional notes.")+'</div>',
+            '<div class="req-meta"><span>👤 '+escHtml(req.contact)+'</span><span>📅 '+escHtml(req.createdAt)+'</span></div>',
+            '<div class="req-actions">',
+            (!isResolved ? '<button class="btn-dash-secondary" style="padding:.35rem .85rem;font-size:.8rem;" onclick="resolveReq(\''+req.id+'\')">Mark Fulfilled</button>' : ""),
+            '<button class="btn-danger" style="padding:.35rem .85rem;font-size:.8rem;" onclick="deleteReq(\''+req.id+'\')">Delete</button>',
+            '</div>'
+          ].join("");
+          grid.appendChild(card);
+        });
+      }
+
+      window.resolveReq = function(id) {
+        if (typeof StorageService !== "undefined") StorageService.updateRequestStatus(id, "completed");
+        toast("Request marked as fulfilled! 🎉", "success");
+        renderRequests(); renderStats();
+      };
+
+      window.deleteReq = function(id) {
+        if (typeof StorageService !== "undefined") StorageService.deleteRequest(id);
+        toast("Request deleted.", "info");
+        renderRequests(); renderStats();
+      };
+
+      // ---- Episode builder ----
+      function addEpisodeRow(container, data) {
+        var count = container.children.length + 1;
+        var epNum = (data && data.epNumber != null && !isNaN(data.epNumber)) ? data.epNumber : count;
+        var epTitleEn = data && data.titleEnglish ? escHtml(data.titleEnglish) : ('Episode ' + epNum);
+        var epTitleSi = data && data.titleSinhala ? escHtml(data.titleSinhala) : (epNum + ' \u0dc0\u0db1 \u0d9a\u0ddc\u0da7\u0dc3');
+        var div = document.createElement("div");
+        div.className = "ep-card";
+        div.innerHTML = [
+          '<div class="ep-row-header"><span class="ep-header-title">Episode '+epNum+'</span>',
+          '<button type="button" class="btn-danger" style="padding:.2rem .5rem;font-size:.75rem;" onclick="this.closest(\'.ep-card\').remove()">✕ Remove</button>',
+          '</div>',
+          '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">',
+          '<div class="fg"><label>Episode #</label><input type="number" class="ep-num" value="'+epNum+'" min="1" oninput="var h=this.closest(\'.ep-card\').querySelector(\'.ep-header-title\');if(h)h.textContent=\'Episode \'+this.value" /></div>',
+          '<div class="fg"><label>Title (English)</label><input type="text" class="ep-en" value="'+epTitleEn+'" /></div>',
+          '<div class="fg"><label>Title (Sinhala)</label><input type="text" class="ep-si" value="'+epTitleSi+'" /></div>',
+          '</div>',
+          '<div style="font-size:.78rem;font-weight:700;color:#fbbf24;margin:.4rem 0 .2rem;">\u25ba Watch Online Mirrors</div>',
+          '<div class="form-grid-2">',
+          '<div class="fg"><label>Watch \u2014 Server 1 (Google Drive)</label><input type="url" class="ep-stream-gd" placeholder="https://drive.google.com/..." /></div>',
+          '<div class="fg"><label>Watch \u2014 Server 2 (Stream / Embed)</label><input type="url" class="ep-stream-buzz" placeholder="https://... (Stream / Embed URL)" /></div>',
+          '</div>',
+          '<div style="font-size:.78rem;font-weight:700;color:#6ee7b7;margin:.4rem 0 .2rem;">\u2b07 Download Mirrors</div>',
+          '<div class="form-grid-2">',
+          '<div class="fg"><label>Download \u2014 Server 1 (Google Drive)</label><input type="url" class="ep-dl-gd" placeholder="https://drive.google.com/..." /></div>',
+          '<div class="fg"><label>Download \u2014 Server 2 (Cloud Mirror)</label><input type="url" class="ep-dl-buzz" placeholder="https://... (Direct / Mirror URL)" /></div>',
+          '</div>'
+        ].join("");
+        container.appendChild(div);
+      }
+
+      // ---- Toast ----
+      function toast(msg, type) {
+        type = type || "info";
+        var tc = document.getElementById("toastContainer");
+        var t = document.createElement("div");
+        t.className = "toast " + type;
+        var icon = type === "success" ? "✅" : type === "error" ? "⚠️" : "ℹ️";
+        t.innerHTML = "<span>"+icon+"</span><span>"+escHtml(msg)+"</span>";
+        tc.appendChild(t);
+        setTimeout(function(){ t.style.opacity="0"; t.style.transition="opacity .3s"; setTimeout(function(){ t.remove(); }, 300); }, 3200);
+      }
+
+      function escHtml(s) {
+        return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+      }
+
+      // ---- BIND ALL EVENTS ----
+      // Login
+      document.getElementById("loginBtn").addEventListener("click", function() {
+        var user = document.getElementById("uname").value;
+        var pass1 = document.getElementById("upass").value;
+        var pass2 = document.getElementById("upass2") ? document.getElementById("upass2").value : "";
+        var remember = document.getElementById("rememberChk").checked;
+        var errBox = document.getElementById("loginError");
+
+        if (doLogin(user, pass1, pass2, remember)) {
+          errBox.style.display = "none";
+          showDashboard();
+          toast("Welcome back, Administrator! 👑", "success");
+        } else {
+          errBox.textContent = "❌ Invalid username or password. Please try again.";
+          errBox.style.display = "block";
+        }
+      });
+
+      // Password visibility toggles
+      document.querySelectorAll(".toggle-pass-btn").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var targetId = btn.getAttribute("data-target");
+          var input = document.getElementById(targetId);
+          if (input) {
+            if (input.type === "password") {
+              input.type = "text";
+              btn.textContent = "🙈";
+              btn.title = "Hide password";
+            } else {
+              input.type = "password";
+              btn.textContent = "👁️";
+              btn.title = "Show password";
+            }
+          }
+        });
+      });
+
+      // Allow pressing Enter in login fields
+      document.getElementById("uname").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+          var pass1El = document.getElementById("upass");
+          if (pass1El && pass1El.value) {
+            var pass2El = document.getElementById("upass2");
+            if (pass2El && pass2El.value) {
+              document.getElementById("loginBtn").click();
+            } else if (pass2El) {
+              pass2El.focus();
+            } else {
+              document.getElementById("loginBtn").click();
+            }
+          } else if (pass1El) {
+            pass1El.focus();
+          }
+        }
+      });
+      document.getElementById("upass").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+          var pass2El = document.getElementById("upass2");
+          if (pass2El && !pass2El.value) {
+            pass2El.focus();
+          } else {
+            document.getElementById("loginBtn").click();
+          }
+        }
+      });
+      var pass2El = document.getElementById("upass2");
+      if (pass2El) {
+        pass2El.addEventListener("keydown", function(e) {
+          if (e.key === "Enter") document.getElementById("loginBtn").click();
+        });
+      }
+
+      // Logout
+      document.getElementById("logoutBtn").addEventListener("click", function() {
+        if (confirm("Are you sure you want to log out?")) {
+          doLogout();
+          showLogin();
+          toast("Logged out successfully.", "info");
+        }
+      });
+
+      // Tab switching
+      document.querySelectorAll(".tab-btn").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          switchTab(btn.dataset.tab);
+        });
+      });
+
+      // Catalog search/filter
+      document.getElementById("searchInput").addEventListener("input", function(e) {
+        searchQuery = e.target.value.trim().toLowerCase();
+        renderCatalog();
+      });
+
+      document.getElementById("catFilter").addEventListener("change", function(e) {
+        catFilterVal = e.target.value;
+        renderCatalog();
+      });
+
+      // Media type toggle (show/hide episode builder & movie fields)
+      var CHAN_CATS = new Set(["teledramas","kdramas"]);
+
+      function updateTypeVis() {
+        var isSeries = document.getElementById("nType").value === "series";
+        document.getElementById("epBuilder").style.display      = isSeries ? "block" : "none";
+        var mf = document.getElementById("adminMovieFields");
+        if (mf) mf.style.display = isSeries ? "none" : "block";
+      }
+      // Channel wrapper is only visible for teledramas and kdramas
+      function updateCatVis() {
+        var cat = document.getElementById("nCat").value;
+        var cw = document.getElementById("adminChannelWrapper");
+        if (cw) {
+          cw.style.display = TV_CHANNEL_CATS.has(cat) ? "block" : "none";
+        }
+      }
+
+      document.getElementById("nType").addEventListener("change", updateTypeVis);
+      document.getElementById("nCat").addEventListener("change",  updateCatVis);
+
+      // Canvas-based image compressor to keep base64 within localStorage quota (< 45KB)
+      function compressImageFile(file, maxDim, quality, callback) {
+        if (!file) return;
+        if (!file.type || !file.type.startsWith("image/")) {
+          var r = new FileReader();
+          r.onload = function(e) { callback(e.target.result); };
+          r.onerror = function() { callback(null); };
+          r.readAsDataURL(file);
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var img = new Image();
+          img.onload = function() {
+            var w = img.naturalWidth || img.width;
+            var h = img.naturalHeight || img.height;
+            var limit = maxDim || 640;
+            if (w > limit || h > limit) {
+              if (w > h) {
+                h = Math.round((h * limit) / w);
+                w = limit;
+              } else {
+                w = Math.round((w * limit) / h);
+                h = limit;
+              }
+            }
+            var canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            try {
+              var compressed = canvas.toDataURL("image/jpeg", quality || 0.75);
+              callback(compressed);
+            } catch (err) {
+              callback(e.target.result);
+            }
+          };
+          img.onerror = function() {
+            callback(e.target.result);
+          };
+          img.src = e.target.result;
+        };
+        reader.onerror = function() { callback(null); };
+        reader.readAsDataURL(file);
+      }
+
+      // File upload zone — base64 hidden fields + drag/drop + preview + compression
+      function bindUploadZone(fileId, hiddenId, previewId, previewImgId, previewNameId) {
+        var fi      = document.getElementById(fileId);
+        var hi      = document.getElementById(hiddenId);
+        var prev    = document.getElementById(previewId);
+        var prevImg = document.getElementById(previewImgId);
+        var prevNm  = document.getElementById(previewNameId);
+        var zone    = fi ? fi.closest(".upload-zone") : null;
+        if (!fi || !hi) return;
+
+        function handleFile(file) {
+          if (!file) return;
+          if (prevNm) prevNm.textContent = "⏳ Optimizing " + file.name + "...";
+          if (prev)   prev.classList.add("visible");
+          compressImageFile(file, 640, 0.75, function(dataUrl) {
+            if (!dataUrl) {
+              toast("Could not process image file", "error");
+              return;
+            }
+            hi.value = dataUrl;
+            if (prevImg) { prevImg.src = dataUrl; }
+            if (prevNm)  { prevNm.textContent = "✅ " + file.name + " (Optimized)"; }
+            if (prev)    { prev.classList.add("visible"); }
+          });
+        }
+
+        fi.addEventListener("change", function() { handleFile(fi.files[0]); });
+
+        if (zone) {
+          zone.addEventListener("dragover", function(e) { e.preventDefault(); zone.classList.add("dragover"); });
+          zone.addEventListener("dragleave", function()  { zone.classList.remove("dragover"); });
+          zone.addEventListener("drop", function(e) {
+            e.preventDefault();
+            zone.classList.remove("dragover");
+            var file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (file && file.type.startsWith("image/")) handleFile(file);
+          });
+        }
+      }
+
+      bindUploadZone("nPosterFile",   "nPoster",   "nPosterPreview",   "nPosterPreviewImg",   "nPosterPreviewName");
+      bindUploadZone("nBackdropFile", "nBackdrop", "nBackdropPreview", "nBackdropPreviewImg", "nBackdropPreviewName");
+      // Edit modal upload zones (bound after openEdit attaches to DOM)
+      bindUploadZone("ePosterFile",   "ePosterHidden",   "ePosterPreview",   "ePosterPreviewImg",   "ePosterPreviewName");
+      bindUploadZone("eBackdropFile", "eBackdropHidden", "eBackdropPreview", "eBackdropPreviewImg", "eBackdropPreviewName");
+
+      // Init visibility
+      updateTypeVis();
+      updateCatVis();
+
+      // Add episode
+      document.getElementById("addEpBtn").addEventListener("click", function() {
+        addEpisodeRow(document.getElementById("epList"));
+      });
+
+      // Add media form
+      document.getElementById("addMediaForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        var titleEn  = document.getElementById("nTitleEn").value.trim();
+        var titleSi  = document.getElementById("nTitleSi").value.trim() || titleEn;
+        var cat      = document.getElementById("nCat").value;
+        var type     = document.getElementById("nType").value;
+        var channel  = TV_CHANNEL_CATS.has(cat) ? (document.getElementById("nChannel").value || "Rupavahini") : "";
+        var year     = parseInt(document.getElementById("nYear").value, 10) || new Date().getFullYear();
+        var poster   = document.getElementById("nPoster").value.trim()   || "assets/images/banner1.jpg";
+        var backdrop = document.getElementById("nBackdrop").value.trim() || poster;
+        var synEn    = document.getElementById("nSynEn").value.trim();
+        var synSi    = document.getElementById("nSynSi").value.trim() || synEn;
+        var featured = document.getElementById("nFeatured").checked;
+
+        var id = "custom-" + Date.now();
+        var item = {
+          id: id,
+          titleEnglish: titleEn, titleSinhala: titleSi,
+          singlishKeywords: [titleEn.toLowerCase(), cat],
+          type: type, category: cat, channel: channel,
+          year: year, rating: 9.5, audio: "Sinhala Dubbed",
+          poster: poster, backdrop: backdrop,
+          badge: "", director: "", dubTeam: channel || "Sinhala Dubbed",
+          synopsisEnglish: synEn, synopsisSinhala: synSi,
+          tags: [cat, "Sinhala Dubbed"],
+          isFeatured: featured, trending: true,
+          createdAt: Date.now(),
+          isNew: true
+        };
+
+        var episodes = [];
+
+        if (type === "series") {
+          var epCards = document.getElementById("epList").querySelectorAll(".ep-card");
+          if (epCards.length === 0) {
+            // Auto-generate fallback Episode 1 if user didn't manually click "Add Episode"
+            episodes.push({
+              epNumber: 1,
+              titleEnglish: "Episode 1",
+              titleSinhala: "01 වන කොටස",
+              thumbnail: backdrop || poster,
+              streamSources: [{ server: "Server 1", url: "" }],
+              downloads: { gdrive: "", buzz: "" }
+            });
+          } else {
+            epCards.forEach(function(card, idx) {
+              var sgd    = ((card.querySelector(".ep-stream-gd")    || {}).value || "").trim();
+              var sbuzz  = ((card.querySelector(".ep-stream-buzz")  || {}).value || "").trim();
+              var dlgd   = ((card.querySelector(".ep-dl-gd")        || {}).value || "").trim();
+              var dlbuzz = ((card.querySelector(".ep-dl-buzz")      || {}).value || "").trim();
+
+              if (sbuzz && (sbuzz.includes("buzzheavier.com") || sbuzz.includes("bzzhr.to")) && !sbuzz.includes("ts.buzzheavier.com")) {
+                if (dlbuzz && (dlbuzz.includes("ts.buzzheavier.com") || dlbuzz.includes("/d/"))) {
+                  sbuzz = dlbuzz;
+                }
+              }
+
+              var streamSources = [];
+              if (sgd)    streamSources.push({ server: "Server 1", url: sgd });
+              if (sbuzz)  streamSources.push({ server: "Server 2", url: sbuzz });
+              if (!streamSources.length) streamSources.push({ server: "Server 1", url: "" });
+
+              var epNumIn = card.querySelector(".ep-num");
+              var epNumVal = epNumIn ? parseInt(epNumIn.value, 10) : (idx + 1);
+              if (isNaN(epNumVal) || epNumVal <= 0) epNumVal = idx + 1;
+
+              var epTitleEn = (card.querySelector(".ep-en") || {}).value || ("Episode " + epNumVal);
+              var epTitleSi = (card.querySelector(".ep-si") || {}).value || (epNumVal + " \u0dc0\u0db1 \u0d9a\u0ddc\u0da7\u0dc3");
+
+              episodes.push({
+                epNumber: epNumVal,
+                titleEnglish: epTitleEn,
+                titleSinhala: epTitleSi,
+                thumbnail: backdrop || poster,
+                streamSources: streamSources,
+                downloads: { gdrive: dlgd, buzz: dlbuzz }
+              });
+            });
+          }
+        } else {
+          // Movie
+          var mStreamGd    = ((document.getElementById("nMovieStreamGd")    || {}).value || "").trim();
+          var mStreamBuzz  = ((document.getElementById("nMovieStreamBuzz")  || {}).value || "").trim();
+          var mDlGd        = ((document.getElementById("nMovieDlGd")        || {}).value || "").trim();
+          var mDlBuzz      = ((document.getElementById("nMovieDlBuzz")      || {}).value || "").trim();
+
+          if (mStreamBuzz && (mStreamBuzz.includes("buzzheavier.com") || mStreamBuzz.includes("bzzhr.to")) && !mStreamBuzz.includes("ts.buzzheavier.com")) {
+            if (mDlBuzz && (mDlBuzz.includes("ts.buzzheavier.com") || mDlBuzz.includes("/d/"))) {
+              mStreamBuzz = mDlBuzz;
+            }
+          }
+
+          var mSources = [];
+          if (mStreamGd)    mSources.push({ server: "Server 1", url: mStreamGd });
+          if (mStreamBuzz)  mSources.push({ server: "Server 2", url: mStreamBuzz });
+          if (!mSources.length) mSources.push({ server: "Server 1", url: "" });
+
+          item.streamSources = mSources;
+          item.downloads     = { gdrive: mDlGd, buzz: mDlBuzz };
+          episodes = [{ epNumber:1, titleEnglish:titleEn, titleSinhala:titleSi, thumbnail:backdrop || poster, streamSources:mSources, downloads:{ gdrive:mDlGd, buzz:mDlBuzz } }];
+        }
+
+        item.episodes      = episodes;
+        item.episodesCount = episodes.length;
+
+        var saved = false;
+        if (typeof StorageService !== "undefined" && StorageService.saveCustomContent) {
+          saved = StorageService.saveCustomContent(item);
+        }
+
+        if (!saved) {
+          toast("Storage quota exceeded! Please use smaller images or URL banners.", "error");
+          return;
+        }
+
+        toast('Added "'+titleEn+'"! 🎉', "success");
+        document.getElementById("addMediaForm").reset();
+        document.getElementById("epList").innerHTML = "";
+        document.getElementById("nPoster").value   = "assets/images/banner1.jpg";
+        document.getElementById("nBackdrop").value = "assets/images/banner1.jpg";
+        var nPostPrev = document.getElementById("nPosterPreview");
+        if (nPostPrev) nPostPrev.classList.remove("visible");
+        var nBackPrev = document.getElementById("nBackdropPreview");
+        if (nBackPrev) nBackPrev.classList.remove("visible");
+        var nPostF = document.getElementById("nPosterFile");
+        if (nPostF) nPostF.value = "";
+        var nBackF = document.getElementById("nBackdropFile");
+        if (nBackF) nBackF.value = "";
+
+        // Reset search query and category filter so the new item is guaranteed visible!
+        catFilterVal = "all";
+        searchQuery = "";
+        var searchInp = document.getElementById("searchInput");
+        if (searchInp) searchInp.value = "";
+        var catSelect = document.getElementById("catFilter");
+        if (catSelect) catSelect.value = "all";
+
+        renderStats();
+        switchTab("catalog");
+      });
+
+      // Edit modal close
+      document.getElementById("closeEditBtn").addEventListener("click", function(){ document.getElementById("editModal").classList.remove("open"); });
+      document.getElementById("cancelEditBtn").addEventListener("click", function(){ document.getElementById("editModal").classList.remove("open"); });
+      document.getElementById("editModal").addEventListener("click", function(e) {
+        if (e.target === this) this.classList.remove("open");
+      });
+
+      // ---- Edit episode row builder (with pre-filled data) ----
+      function addEditEpisodeRow(container, data) {
+        var count = container.children.length + 1;
+        var epNum = (data && data.epNumber != null && !isNaN(data.epNumber)) ? data.epNumber : count;
+        var epTitleEn = data && data.titleEnglish ? escHtml(data.titleEnglish) : ('Episode ' + epNum);
+        var epTitleSi = data && data.titleSinhala ? escHtml(data.titleSinhala) : (epNum + ' \u0dc0\u0db1 \u0d9a\u0ddc\u0da7\u0dc3');
+        var div = document.createElement("div");
+        div.className = "ep-card";
+        var epSources = (data && data.streamSources) || [];
+        var sgd    = extractStreamSource(epSources, "Server 1", "drive", 0);
+        var sbuzz  = extractStreamSource(epSources, "Server 2", "buzz", 1);
+        var dlgd   = data && data.downloads ? (data.downloads.gdrive || "") : "";
+        var dlbuzz = data && data.downloads ? (data.downloads.buzz || "") : "";
+        div.innerHTML = [
+          '<div class="ep-row-header"><span class="ep-header-title">Episode '+epNum+'</span>',
+          '<button type="button" class="btn-danger" style="padding:.2rem .5rem;font-size:.75rem;" onclick="this.closest(\'.ep-card\').remove()">✕ Remove</button>',
+          '</div>',
+          '<div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">',
+          '<div class="fg"><label>Episode #</label><input type="number" class="ep-num" value="'+epNum+'" min="1" oninput="var h=this.closest(\'.ep-card\').querySelector(\'.ep-header-title\');if(h)h.textContent=\'Episode \'+this.value" /></div>',
+          '<div class="fg"><label>Title (English)</label><input type="text" class="ep-en" value="'+epTitleEn+'" /></div>',
+          '<div class="fg"><label>Title (Sinhala)</label><input type="text" class="ep-si" value="'+epTitleSi+'" /></div>',
+          '</div>',
+          '<div style="font-size:.78rem;font-weight:700;color:#fbbf24;margin:.4rem 0 .2rem;">\u25ba Watch Online Mirrors</div>',
+          '<div class="form-grid-2">',
+          '<div class="fg"><label>Watch \u2014 Server 1 (Google Drive)</label><input type="url" class="ep-stream-gd" value="'+escHtml(sgd)+'" placeholder="https://drive.google.com/..." /></div>',
+          '<div class="fg"><label>Watch \u2014 Server 2 (Stream / Embed)</label><input type="url" class="ep-stream-buzz" value="'+escHtml(sbuzz)+'" placeholder="https://... (Stream / Embed URL)" /></div>',
+          '</div>',
+          '<div style="font-size:.78rem;font-weight:700;color:#6ee7b7;margin:.4rem 0 .2rem;">\u2b07 Download Mirrors</div>',
+          '<div class="form-grid-2">',
+          '<div class="fg"><label>Download \u2014 Server 1 (Google Drive)</label><input type="url" class="ep-dl-gd" value="'+escHtml(dlgd)+'" placeholder="https://drive.google.com/..." /></div>',
+          '<div class="fg"><label>Download \u2014 Server 2 (Cloud Mirror)</label><input type="url" class="ep-dl-buzz" value="'+escHtml(dlbuzz)+'" placeholder="https://... (Direct / Mirror URL)" /></div>',
+          '</div>'
+        ].join("");
+        container.appendChild(div);
+      }
+
+      // Edit form submit
+      document.getElementById("editForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        try {
+          if (!currentEditId) return;
+          var catalog  = getFullCatalog();
+          var original = catalog.find(function(c){ return c.id === currentEditId; });
+          if (!original) {
+            toast("Error: Original record not found!", "error");
+            return;
+          }
+
+          var titleEn  = document.getElementById("eTitleEn").value.trim()       || original.titleEnglish;
+          var titleSi  = document.getElementById("eTitleSi").value.trim()       || original.titleSinhala;
+          var cat      = document.getElementById("eCat").value                  || original.category;
+          var type     = document.getElementById("eType").value                 || original.type;
+          var channel  = TV_CHANNEL_CATS.has(cat) ? (document.getElementById("eChannel").value || "Rupavahini") : "";
+          var year     = parseInt(document.getElementById("eYear").value, 10)   || original.year;
+          var ratEl    = document.getElementById("eRating");
+          var rating   = (ratEl && parseFloat(ratEl.value)) || original.rating || 9.5;
+          var poster   = document.getElementById("ePosterHidden").value.trim()  || original.poster;
+          var backdrop = document.getElementById("eBackdropHidden").value.trim()|| poster;
+          var synEn    = document.getElementById("eSynEn").value.trim()         || original.synopsisEnglish || "";
+          var synSi    = document.getElementById("eSynSi").value.trim()         || original.synopsisSinhala || synEn;
+          var featured = document.getElementById("eFeatured").checked;
+
+          var episodes = [];
+          if (type === "series") {
+            var epCards = document.getElementById("editEpList").querySelectorAll(".ep-card");
+            epCards.forEach(function(card, idx) {
+              var sgd    = ((card.querySelector(".ep-stream-gd")    || {}).value || "").trim();
+              var sbuzz  = ((card.querySelector(".ep-stream-buzz")  || {}).value || "").trim();
+              var dlgd   = ((card.querySelector(".ep-dl-gd")        || {}).value || "").trim();
+              var dlbuzz = ((card.querySelector(".ep-dl-buzz")      || {}).value || "").trim();
+
+              if (sbuzz && (sbuzz.includes("buzzheavier.com") || sbuzz.includes("bzzhr.to")) && !sbuzz.includes("ts.buzzheavier.com")) {
+                if (dlbuzz && (dlbuzz.includes("ts.buzzheavier.com") || dlbuzz.includes("/d/"))) {
+                  sbuzz = dlbuzz;
+                }
+              }
+
+              var streamSources = [];
+              if (sgd)    streamSources.push({ server: "Server 1", url: sgd });
+              if (sbuzz)  streamSources.push({ server: "Server 2", url: sbuzz });
+              if (!streamSources.length) streamSources.push({ server: "Server 1", url: "" });
+              var epNumIn = card.querySelector(".ep-num");
+              var epNumVal = epNumIn ? parseInt(epNumIn.value, 10) : (idx + 1);
+              if (isNaN(epNumVal) || epNumVal <= 0) epNumVal = idx + 1;
+
+              var epTitleEn = card.querySelector(".ep-en") ? card.querySelector(".ep-en").value : ("Episode " + epNumVal);
+              var epTitleSi = card.querySelector(".ep-si") ? card.querySelector(".ep-si").value : (epNumVal + " \u0dc0\u0db1 \u0d9a\u0ddc\u0da7\u0dc3");
+              episodes.push({
+                epNumber: epNumVal,
+                titleEnglish: epTitleEn,
+                titleSinhala: epTitleSi,
+                thumbnail: backdrop || poster,
+                streamSources: streamSources,
+                downloads: { gdrive: dlgd, buzz: dlbuzz }
+              });
+            });
+          } else {
+            var mStreamGd    = ((document.getElementById("eMovieStreamGd")    || {}).value || "").trim();
+            var mStreamBuzz  = ((document.getElementById("eMovieStreamBuzz")  || {}).value || "").trim();
+            var mDlGd        = ((document.getElementById("eMovieDlGd")        || {}).value || "").trim();
+            var mDlBuzz      = ((document.getElementById("eMovieDlBuzz")      || {}).value || "").trim();
+
+            if (mStreamBuzz && (mStreamBuzz.includes("buzzheavier.com") || mStreamBuzz.includes("bzzhr.to")) && !mStreamBuzz.includes("ts.buzzheavier.com")) {
+              if (mDlBuzz && (mDlBuzz.includes("ts.buzzheavier.com") || mDlBuzz.includes("/d/"))) {
+                mStreamBuzz = mDlBuzz;
+              }
+            }
+
+            var mSources = [];
+            if (mStreamGd)    mSources.push({ server: "Server 1", url: mStreamGd });
+            if (mStreamBuzz)  mSources.push({ server: "Server 2", url: mStreamBuzz });
+            if (!mSources.length) mSources.push({ server: "Server 1", url: "" });
+            episodes = [{ epNumber:1, titleEnglish:titleEn, titleSinhala:titleSi, thumbnail:backdrop || poster, streamSources:mSources, downloads:{ gdrive:mDlGd, buzz:mDlBuzz } }];
+          }
+
+          var updated = Object.assign({}, original, {
+            titleEnglish:     titleEn,
+            titleSinhala:     titleSi,
+            category:         cat,
+            type:             type,
+            channel:          channel,
+            year:             year,
+            rating:           rating,
+            poster:           poster,
+            backdrop:         backdrop,
+            synopsisEnglish:  synEn,
+            synopsisSinhala:  synSi,
+            isFeatured:       featured,
+            episodes:         episodes.length ? episodes : original.episodes,
+            episodesCount:    episodes.length ? episodes.length : (original.episodes ? original.episodes.length : (original.episodesCount || 1))
+          });
+
+          if (typeof StorageService !== "undefined" && StorageService.updateContent) {
+            StorageService.updateContent(updated);
+          }
+          toast('Updated "'+titleEn+'"! ✅', "success");
+          document.getElementById("editModal").classList.remove("open");
+          currentEditId = null;
+          renderCatalog();
+          renderStats();
+        } catch (err) {
+          console.error("Failed to save edit:", err);
+          toast("Failed to save changes: " + err.message, "error");
+        }
+      });
+
+      // Database tools
+      document.getElementById("exportBtn").addEventListener("click", function() {
+        var catalog = getFullCatalog();
+        var json = JSON.stringify(catalog, null, 2);
+        var a = document.createElement("a");
+        a.href = "data:text/json;charset=utf-8," + encodeURIComponent(json);
+        a.download = "sinhalaflix_backup_" + Date.now() + ".json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        toast("Database exported! 💾", "success");
+      });
+
+      document.getElementById("importBtn").addEventListener("click", function() {
+        document.getElementById("importFileInput").click();
+      });
+
+      document.getElementById("importFileInput").addEventListener("change", function(e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            var data = JSON.parse(ev.target.result);
+            if (Array.isArray(data)) {
+              data.forEach(function(item){ if (typeof StorageService !== "undefined") StorageService.saveCustomContent(item); });
+              toast("Imported "+data.length+" records! 📥", "success");
+              renderCatalog(); renderStats();
+            } else { alert("Invalid JSON structure."); }
+          } catch(err) { alert("Error parsing file: " + err.message); }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", function() {
+        if (confirm("Reset all edits and custom additions back to default catalog?")) {
+          if (typeof StorageService !== "undefined") StorageService.resetCatalogToDefaults();
+          toast("Catalog reset to defaults. 🔄", "success");
+          renderCatalog(); renderStats();
+        }
+      });
+
+      // Save Monetag settings
+      var saveSettingsBtn = document.getElementById("saveSettingsBtn");
+      if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener("click", function() {
+          var settings = {
+            monetagAd1: (document.getElementById("monetagAd1") || {}).value || "",
+            monetagAd2: (document.getElementById("monetagAd2") || {}).value || ""
+          };
+          try { localStorage.setItem("sinhalaflix_settings_v1", JSON.stringify(settings)); } catch(e){}
+          var msgEl = document.getElementById("settingsSavedMsg");
+          if (msgEl) { msgEl.style.display="block"; setTimeout(function(){ msgEl.style.display="none"; }, 3000); }
+          toast("Ad settings saved! \u2705", "success");
+        });
+      }
+
+      // Load settings values on tab switch
+      function loadSettings() {
+        try {
+          var s = JSON.parse(localStorage.getItem("sinhalaflix_settings_v1") || "{}");
+          var el1 = document.getElementById("monetagAd1");
+          var el2 = document.getElementById("monetagAd2");
+          if (el1) el1.value = s.monetagAd1 || "";
+          if (el2) el2.value = s.monetagAd2 || "";
+        } catch(e){}
+      }
+
+      // ---- GitHub Live Sync ----
+      function loadGhConfig() {
+        try {
+          var cfg = (typeof StorageService !== "undefined" && StorageService.getGitHubConfig) 
+            ? StorageService.getGitHubConfig() 
+            : { owner: "", repo: "", branch: "main", token: "" };
+          
+          var oEl = document.getElementById("ghOwner");
+          var rEl = document.getElementById("ghRepo");
+          var bEl = document.getElementById("ghBranch");
+          var tEl = document.getElementById("ghToken");
+          
+          if (oEl) oEl.value = cfg.owner || "";
+          if (rEl) rEl.value = cfg.repo || "";
+          if (bEl) bEl.value = cfg.branch || "main";
+          if (tEl) tEl.value = cfg.token || "";
+        } catch(e) {
+          console.error("Failed to load GitHub config:", e);
+        }
+      }
+
+      function logGhConsole(msg, type) {
+        var consoleEl = document.getElementById("ghSyncConsole");
+        if (!consoleEl) return;
+        var timeStr = new Date().toLocaleTimeString();
+        var line = document.createElement("div");
+        line.className = type || "info";
+        line.textContent = "[" + timeStr + "] " + msg;
+        consoleEl.appendChild(line);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      }
+
+      function clearGhConsole() {
+        var consoleEl = document.getElementById("ghSyncConsole");
+        if (consoleEl) consoleEl.innerHTML = "";
+      }
+
+      var saveGhConfigBtn = document.getElementById("saveGhConfigBtn");
+      if (saveGhConfigBtn) {
+        saveGhConfigBtn.addEventListener("click", function() {
+          var owner = (document.getElementById("ghOwner") || {}).value || "";
+          var repo = (document.getElementById("ghRepo") || {}).value || "";
+          var branch = (document.getElementById("ghBranch") || {}).value || "main";
+          var token = (document.getElementById("ghToken") || {}).value || "";
+          
+          if (typeof StorageService !== "undefined" && StorageService.saveGitHubConfig) {
+            StorageService.saveGitHubConfig({
+              owner: owner.trim(),
+              repo: repo.trim(),
+              branch: branch.trim() || "main",
+              token: token.trim()
+            });
+            toast("GitHub settings saved! 💾", "success");
+            logGhConsole("GitHub settings saved to local browser storage.", "suc");
+          }
+        });
+      }
+
+      var downloadDataJsBtn = document.getElementById("downloadDataJsBtn");
+      if (downloadDataJsBtn) {
+        downloadDataJsBtn.addEventListener("click", function() {
+          if (typeof StorageService !== "undefined" && StorageService.downloadDataJsFile) {
+            StorageService.downloadDataJsFile();
+            toast("Downloaded data.js! Upload it to js/data.js in your GitHub repository.", "success");
+            logGhConsole("Generated and downloaded latest data.js successfully.", "suc");
+          }
+        });
+      }
+
+      async function executePublish() {
+        var owner = ((document.getElementById("ghOwner") || {}).value || "").trim();
+        var repo = ((document.getElementById("ghRepo") || {}).value || "").trim();
+        var branch = ((document.getElementById("ghBranch") || {}).value || "main").trim();
+        var token = ((document.getElementById("ghToken") || {}).value || "").trim();
+
+        if (!owner || !repo || !token) {
+          switchTab("database");
+          var card = document.getElementById("ghSyncCard");
+          if (card) card.scrollIntoView({ behavior: "smooth" });
+          if (!owner) { var el = document.getElementById("ghOwner"); if (el) el.focus(); }
+          else if (!repo) { var el = document.getElementById("ghRepo"); if (el) el.focus(); }
+          else if (!token) { var el = document.getElementById("ghToken"); if (el) el.focus(); }
+          
+          toast("Please enter your GitHub Username, Repository, and Token first!", "warning");
+          clearGhConsole();
+          logGhConsole("⚠️ Configuration incomplete. Please fill in your GitHub Username, Repo, and Token below.", "err");
+          return;
+        }
+
+        // Save latest values into local storage
+        if (typeof StorageService !== "undefined" && StorageService.saveGitHubConfig) {
+          StorageService.saveGitHubConfig({ owner: owner, repo: repo, branch: branch, token: token });
+        }
+
+        var topBtn = document.getElementById("topPublishBtn");
+        var cardBtn = document.getElementById("publishGhBtn");
+
+        if (topBtn) { topBtn.disabled = true; topBtn.textContent = "⏳ Publishing..."; }
+        if (cardBtn) { cardBtn.disabled = true; cardBtn.textContent = "⏳ Publishing to GitHub..."; }
+
+        clearGhConsole();
+        logGhConsole("Starting GitHub Pages sync...", "info");
+
+        try {
+          if (typeof StorageService === "undefined" || !StorageService.publishToGitHub) {
+            throw new Error("StorageService.publishToGitHub is not available.");
+          }
+
+          var result = await StorageService.publishToGitHub(function(progressMsg) {
+            logGhConsole(progressMsg, "info");
+          });
+
+          logGhConsole("✅ Successfully published to GitHub! (" + result.timestamp + ")", "suc");
+          toast("Published to GitHub! 🚀 Changes will appear across all devices in ~1-2 minutes.", "success");
+        } catch (err) {
+          console.error("GitHub Sync Error:", err);
+          logGhConsole("❌ Error: " + (err.message || err), "err");
+          toast("Publish failed: " + (err.message || "Unknown error"), "error");
+        } finally {
+          if (topBtn) { topBtn.disabled = false; topBtn.textContent = "🚀 Publish to GitHub"; }
+          if (cardBtn) { cardBtn.disabled = false; cardBtn.textContent = "🚀 Commit & Publish to GitHub Now"; }
+        }
+      }
+
+      var publishGhBtn = document.getElementById("publishGhBtn");
+      if (publishGhBtn) {
+        publishGhBtn.addEventListener("click", executePublish);
+      }
+
+      var topPublishBtn = document.getElementById("topPublishBtn");
+      if (topPublishBtn) {
+        topPublishBtn.addEventListener("click", executePublish);
+      }
+
+      // Cross-tab synchronization: keep admin dashboard & catalog fresh if changes occur in another tab
+      window.addEventListener("storage", function(e) {
+        if (
+          e.key === "sinhalaflix_custom_content_v1" ||
+          e.key === "sinhalaflix_edited_content_v1" ||
+          e.key === "sinhalaflix_deleted_ids_v1" ||
+          e.key === "sinhalaflix_requests_v1"
+        ) {
+          renderStats();
+          renderCatalog();
+          renderRequests();
+        }
+      });
+
+      // ---- INIT ----
+      if (isLoggedIn()) {
+        showDashboard();
+        loadSettings();
+        loadGhConfig();
+      } else {
+        showLogin();
+      }
+
+    })(); // End IIFE
+  </script>
+
+</body>
+</html>

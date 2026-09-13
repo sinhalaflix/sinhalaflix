@@ -1,0 +1,247 @@
+/* ==========================================================================
+   Sinhala Dubbed Cartoons & Movies - Responsive Media Queries
+   ජංගම දුරකථන සහ ටැබ්ලට් සඳහා ප්‍රශස්තකරණය
+   ========================================================================== */
+
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(8, 11, 18, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-subtle);
+  padding: 0.45rem 1rem;
+  z-index: 4000;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-sinhala);
+  cursor: pointer;
+  padding: 0.3rem;
+  transition: color var(--transition-fast);
+}
+
+.mobile-nav-item span.icon {
+  font-size: 1.2rem;
+}
+
+.mobile-nav-item.active,
+.mobile-nav-item:hover {
+  color: var(--accent-gold);
+}
+
+/* Mobile Drawer Overlay */
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-glass);
+  z-index: 6000;
+  transition: left var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.mobile-nav-drawer.active {
+  left: 0;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: none;
+}
+
+.drawer-links a, .drawer-links button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  font-family: var(--font-sinhala);
+  cursor: pointer;
+  text-align: left;
+  padding: 0.5rem 0;
+}
+
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
+
+/* Tablets and below (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .hero-carousel-wrapper {
+    min-height: 420px;
+  }
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-content {
+    padding: 2rem;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 60px; /* Space for bottom nav */
+  }
+
+  .header-actions .nav-link-btn {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .header-search-wrapper {
+    max-width: 200px;
+  }
+
+  .search-kbd-hint {
+    display: none;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  .hero-carousel-wrapper {
+    min-height: 480px;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-content {
+    padding: 1.5rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .hero-indicators {
+    bottom: 0.75rem;
+    right: 1rem;
+  }
+
+  .catalog-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .card-title-si {
+    font-size: 0.95rem;
+  }
+
+  .detail-hero-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-poster-img {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .controls-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .volume-slider {
+    width: 50px;
+  }
+
+  .toast-container {
+    bottom: 5rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .toast-message {
+    max-width: 100%;
+  }
+}
+
+/* Small Smart Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .brand-tagline {
+    display: none;
+  }
+
+  .header-search-wrapper {
+    max-width: 150px;
+  }
+
+  .catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .card-info {
+    padding: 0.7rem;
+  }
+
+  .modal-container {
+    max-height: 95vh;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+}

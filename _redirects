@@ -1,0 +1,4 @@
+# Netlify / Cloudflare Pages Redirects
+/admin        /admin.html      200
+/movie        /movie.html      200
+/download     /download-wait.html 200

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary SEO Tags -->
+  <title>SinhalaFlix Hub | Sinhala Dubbed Cartoons, Movies, Teledramas & K-Dramas</title>
+  <meta name="description" content="Sri Lanka's leading digital universe for Sinhala dubbed cartoons, blockbuster movies, classic teledramas, Sinhala dubbed K-Dramas, and cartoon series. Watch online in 1080p FHD & download free." />
+  <meta name="keywords" content="sinhala cartoons, sinhala dubbed kdramas, sinhala teledramas, soora pappa, sujatha diyaniya, koombiyo, lion king sinhala, sirasa cartoons, rupavahini kdrama, sinhala dubbing" />
+  <meta name="theme-color" content="#080b12" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SinhalaFlix Hub - Sinhala Dubbed Cartoons, Movies, Teledramas & KDramas" />
+  <meta property="og:description" content="Watch & download Sinhala dubbed Cartoons, Movies, Teledramas, K-Dramas and Cartoon Series with 1080p FHD & 720p HD streaming." />
+  <meta property="og:image" content="assets/images/banner1.jpg" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="header-inner">
+        <!-- Logo -->
+        <a href="index.html" class="brand-logo" id="brandLogoLink">
+          <div class="brand-icon-box">
+            <span>🎬</span>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">Sinhala<span style="color: #f59e0b;">Flix</span></span>
+            <span class="brand-tagline">Cartoons • Movies • Teledramas • K-Dramas</span>
+          </div>
+        </a>
+
+        <!-- Global Search Bar -->
+        <div class="header-search-wrapper">
+          <div class="search-input-box">
+            <span class="search-icon-left">🔍</span>
+            <input 
+              type="text" 
+              id="mainSearchInput" 
+              class="search-input" 
+              placeholder="Search Cartoons, Movies, Teledramas, K-Dramas (e.g. Soora Pappa, Sujatha Diyaniya, Koombiyo)..." 
+              autocomplete="off" 
+            />
+            <button id="btnClearSearch" class="search-clear-btn" title="Clear search">✕</button>
+            <span class="search-kbd-hint">/</span>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <button id="navBtnWatchlist" class="nav-link-btn" title="My Watchlist">
+            <span>❤️</span>
+            <span>Watchlist</span>
+          </button>
+          <button id="navBtnHistory" class="nav-link-btn" title="Continue Watching History">
+            <span>🕒</span>
+            <span>History</span>
+          </button>
+          <button id="btnOpenRequestModal" class="btn btn-secondary btn-sm" title="Request Content">
+            <span>✨ Request</span>
+          </button>
+          <a href="admin.html" class="btn btn-primary btn-sm" title="Admin Content Management Portal">
+            <span>🔒 Admin Portal</span>
+          </a>
+          <button id="btnMobileMenuToggle" class="mobile-menu-toggle" aria-label="Toggle Menu">
+            <span>☰</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav-drawer" id="mobileNavDrawer">
+    <div class="drawer-header">
+      <span class="brand-name">Sinhala<span style="color:#f59e0b;">Flix</span></span>
+      <button class="btn-close-modal" id="btnCloseMobileNav" aria-label="Close">✕</button>
+    </div>
+    <ul class="drawer-links">
+      <li><a href="#" onclick="App.setCategory('all')">🌟 All Collection</a></li>
+      <li><a href="#" onclick="App.setCategory('cartoons')">🦁 Sinhala Cartoons</a></li>
+      <li><a href="#" onclick="App.setCategory('movies')">🎬 Dubbed Movies</a></li>
+      <li><a href="#" onclick="App.setCategory('teledramas')">📺 Sinhala Teledramas</a></li>
+      <li><a href="#" onclick="App.setCategory('kdramas')">🌸 Sinhala K-Dramas</a></li>
+      <li><a href="#" onclick="App.setCategory('cartoon_series')">⚡ Cartoon Series</a></li>
+      <li><a href="#" onclick="App.setCategory('watchlist')">❤️ My Watchlist</a></li>
+      <li><a href="#" onclick="App.setCategory('continue')">🕒 History</a></li>
+      <li><button onclick="App.openRequestModal()">✨ Request Content</button></li>
+      <li><a href="admin.html" style="color: var(--accent-gold); font-weight: 700;">🔒 Admin Portal</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <!-- Featured Hero Banner Section -->
+    <section class="hero-banner-section" id="heroBanner">
+      <div class="container">
+        <div class="hero-carousel-wrapper" id="heroCarouselContainer">
+          <!-- Populated dynamically via app.js -->
+        </div>
+        <div class="hero-indicators" id="heroIndicators">
+          <!-- Slide dots -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Continue Watching Shelf -->
+    <section class="continue-watching-section" id="continueWatchingSection" style="display: none;">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-title-icon">🕒</span>
+            <span>Continue Watching</span>
+          </h2>
+        </div>
+        <div class="continue-grid" id="continueWatchingGrid">
+          <!-- History cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Filter & Catalog Section -->
+    <section class="catalog-section" id="catalogSection">
+      <div class="container">
+        
+        <!-- Filter Controls Bar -->
+        <div class="filter-bar-container">
+          <!-- Category Tabs -->
+          <div class="category-tabs-list">
+            <button class="category-tab-btn active" data-category="all">
+              <span>🌟</span>
+              <span>All Collection</span>
+            </button>
+            <button class="category-tab-btn" data-category="cartoons">
+              <span>🦁</span>
+              <span>Cartoons (කාටූන්)</span>
+            </button>
+            <button class="category-tab-btn" data-category="movies">
+              <span>🎬</span>
+              <span>Dubbed Movies (චිත්‍රපට)</span>
+            </button>
+            <button class="category-tab-btn" data-category="teledramas">
+              <span>📺</span>
+              <span>Teledramas (ටෙලි නාට්‍ය)</span>
+            </button>
+            <button class="category-tab-btn" data-category="kdramas">
+              <span>🌸</span>
+              <span>K-Dramas (කොරියන් නාට්‍ය)</span>
+            </button>
+            <button class="category-tab-btn" data-category="cartoon_series">
+              <span>⚡</span>
+              <span>Cartoon Series (කතා මාලා)</span>
+            </button>
+            <button class="category-tab-btn" data-category="watchlist">
+              <span>❤️</span>
+              <span>Watchlist</span>
+            </button>
+          </div>
+
+          <!-- Channel Filter & Sorting -->
+          <div class="filter-sub-bar">
+            <div class="channel-pills-list">
+              <span class="channel-pill-label">Network / Dub:</span>
+              <button class="channel-pill active" data-channel="all">All Networks</button>
+              <button class="channel-pill" data-channel="Rupavahini">Rupavahini (රූපවාහිනී)</button>
+              <button class="channel-pill" data-channel="Sirasa TV">Sirasa TV (සිරස)</button>
+              <button class="channel-pill" data-channel="ITN">ITN (ස්වාධීන)</button>
+              <button class="channel-pill" data-channel="Swarnavahini">Swarnavahini (ස්වර්ණවාහිනී)</button>
+              <button class="channel-pill" data-channel="Studio Dub">Studio Dubs</button>
+            </div>
+
+            <div class="sort-wrapper">
+              <span class="sort-label">Sort By:</span>
+              <select id="sortSelector" class="sort-select">
+                <option value="popular">🔥 Most Popular</option>
+                <option value="latest">📅 Latest Added</option>
+                <option value="rating">⭐ Highest Rated</option>
+                <option value="az">🔤 Title A - Z</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Catalog Header -->
+        <div class="catalog-header">
+          <h1 class="section-title" id="catalogSectionHeading">
+            <span class="section-title-icon">🍿</span>
+            <span>Sinhala Dubbed Entertainment Universe</span>
+          </h1>
+          <span class="catalog-count-badge" id="catalogCountBadge">Loading Titles...</span>
+        </div>
+
+        <!-- Catalog Grid -->
+        <div class="catalog-grid" id="catalogGrid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       MODALS
+       ========================================================================== -->
+
+  <!-- 1. Video Player Modal -->
+  <div class="modal-backdrop" id="playerModal">
+    <div class="modal-container player-modal-container">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 class="modal-title" id="playerContentTitle">Watch Online</h3>
+          <span class="modal-subtitle" id="playerContentSubTitle">HD Streaming • Sinhala Dubbed Audio</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span class="badge-audio" id="playerAudioBadge">Sinhala Dubbed</span>
+          <button class="btn-close-modal" id="btnClosePlayer" title="Close Player">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="player-main-layout">
+          <!-- Video Screen Wrapper -->
+          <div class="video-wrapper" id="videoPlayerWrapper">
+            <video id="mainVideoPlayer" class="video-element" playsinline controlsList="nodownload" oncontextmenu="return false;" poster="assets/images/banner1.jpg"></video>
+            <iframe id="mainIframePlayer" class="video-element" style="display:none; width:100%; height:100%; border:none; background:#000;" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+            <div class="iframe-shield" id="mainIframeShield" style="display:none;"></div>
+            
+            <!-- Custom Video Controls -->
+            <div class="video-controls-overlay" id="videoControlsBar">
+              <!-- Timeline Scrubber -->
+              <div class="progress-container" id="playerProgressBar">
+                <div class="progress-buffered" id="playerProgressBuffered"></div>
+                <div class="progress-current" id="playerProgressCurrent"></div>
+                <div class="progress-hover" id="playerProgressHover">
+                  <span id="playerHoverTime">00:00</span>
+                </div>
+              </div>
+
+              <!-- Controls Toolbar -->
+              <div class="controls-row">
+                <div class="controls-left">
+                  <!-- Play / Pause -->
+                  <button class="btn-control" id="btnPlayPause" title="Play / Pause (Space or K)">
+                    <svg id="playIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <svg id="pauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                  </button>
+
+                  <!-- Skip -10s -->
+                  <button class="btn-control" id="btnRewind" title="Rewind 10 seconds">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.2 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                  </button>
+
+                  <!-- Skip +10s -->
+                  <button class="btn-control" id="btnForward" title="Forward 10 seconds">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 10.6C17.05 8.99 14.65 8 12 8c-4.65 0-8.58 3.03-9.96 7.22L4.4 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.68 5.12 1.88L13.5 16H22.5V7l-3.6 3.6z"/></svg>
+                  </button>
+
+                  <!-- Volume -->
+                  <div class="volume-wrapper">
+                    <button class="btn-control" id="btnMute" title="Mute / Unmute (M)">
+                      <svg id="volumeIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                      </svg>
+                    </button>
+                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.05" value="1" />
+                  </div>
+
+                  <!-- Time Display -->
+                  <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
+                </div>
+
+                <div class="controls-right">
+                  <!-- Speed Select -->
+                  <select id="playerSpeedSelect" class="control-select" title="Playback Speed">
+                    <option value="0.75">0.75x</option>
+                    <option value="1" selected>1.0x (Normal)</option>
+                    <option value="1.25">1.25x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2.0x</option>
+                  </select>
+
+                  <!-- Quality Select -->
+                  <select id="playerQualitySelect" class="control-select" title="Stream Quality">
+                    <option value="1080p FHD" selected>1080p FHD</option>
+                    <option value="720p HD">720p HD</option>
+                    <option value="480p SD">480p SD</option>
+                  </select>
+
+                  <!-- Theater Mode -->
+                  <button class="btn-control" id="btnTheaterMode" title="Theater Mode (T)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H5V8h14v8z"/></svg>
+                  </button>
+
+                  <!-- Picture in Picture -->
+                  <button class="btn-control" id="btnPipMode" title="Picture in Picture">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>
+                  </button>
+
+                  <!-- Fullscreen -->
+                  <button class="btn-control" id="btnFullscreen" title="Fullscreen (F)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Server Switching Bar -->
+          <div class="player-server-section">
+            <span class="server-label">🚀 Stream Server:</span>
+            <div class="server-btn-list" id="playerServerButtons">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Series Episode List & Autoplay Toggle -->
+          <div class="player-episode-section" id="playerEpisodeSection">
+            <div class="player-ep-header">
+              <h4 style="font-size: 0.95rem; font-weight: 700;">📺 Select Episode:</h4>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <label style="font-size: 0.82rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                  <input type="checkbox" id="toggleAutoplayNext" checked />
+                  <span>Autoplay Next Episode</span>
+                </label>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-secondary btn-xs" id="btnPrevEpisode">◀ Previous</button>
+                  <button class="btn btn-primary btn-xs" id="btnNextEpisode">Next ▶</button>
+                </div>
+              </div>
+            </div>
+            <div class="player-ep-list" id="playerEpisodeList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Download Hub Modal -->
+  <div class="modal-backdrop" id="downloadModal">
+    <div class="modal-container download-modal-container">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 class="modal-title" id="downloadModalTitle">Download Center</h3>
+          <span class="modal-subtitle" id="downloadModalSubTitle">Direct High-Speed & Cloud Mirrors</span>
+        </div>
+        <button class="btn-close-modal" id="btnCloseDownloadModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Download Header Card -->
+        <div class="download-header-card">
+          <div class="download-poster-wrapper">
+            <img id="downloadPosterImg" src="assets/images/banner1.jpg" alt="Poster" />
+          </div>
+          <div class="download-header-info">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
+              <span class="badge-channel" id="downloadAudioBadge">Sinhala Dubbed</span>
+              <span class="badge-quality" id="downloadQualityBadge">1080p FHD / 720p HD / 480p SD</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">
+              Download directly to your device at high speed. Select your preferred resolution and mirror below.
+            </p>
+          </div>
+        </div>
+
+        <!-- Series Episode Selector (if series) -->
+        <div class="form-group" id="downloadEpisodeSelectorWrapper" style="display: none;">
+          <label for="downloadEpisodeSelect">Select Episode:</label>
+          <select id="downloadEpisodeSelect" class="form-control">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <!-- Quality Select Cards -->
+        <label style="display: block; font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 600;">
+          Select Resolution:
+        </label>
+        <div class="download-quality-grid" id="downloadQualityGrid">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Download Mirrors List -->
+        <label style="display: block; font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 600;">
+          Download Mirror Links:
+        </label>
+        <div class="download-mirrors-list" id="downloadMirrorsList">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Help Notice -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.85rem; font-size: 0.8rem; color: var(--text-muted);">
+          💡 <strong>Tip:</strong> If using Mobile Data, we recommend selecting <strong>480p SD (Data Saver)</strong> for faster downloads.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Details & Comments Modal -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-container" style="max-width: 860px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 class="modal-title" id="detailTitleEn">Cartoon Details</h3>
+          <span class="modal-subtitle" id="detailTitleSi">Sinhala Name</span>
+        </div>
+        <button class="btn-close-modal" id="btnCloseDetailModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-hero-layout">
+          <div>
+            <img id="detailPoster" class="detail-poster-img" src="assets/images/banner1.jpg" alt="Poster" />
+          </div>
+          <div class="detail-info-col">
+            <div class="detail-meta-row">
+              <span id="detailRating">⭐ 9.9 / 10</span>
+              <span id="detailChannel" class="badge-channel">Rupavahini</span>
+              <span id="detailAudio" class="badge-audio">Sinhala Dubbed</span>
+            </div>
+
+            <!-- Tags -->
+            <div class="detail-tags-wrapper" id="detailTagsList"></div>
+
+            <div class="detail-specs-table">
+              <span class="spec-key">Dubbing Director:</span>
+              <span class="spec-val" id="detailDirector">-</span>
+              <span class="spec-key">Voice Team / Channel:</span>
+              <span class="spec-val" id="detailDubTeam">-</span>
+            </div>
+
+            <p id="detailSynopsis" style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 1.25rem;">
+              -
+            </p>
+
+            <div class="detail-actions-row">
+              <button class="btn btn-primary" id="btnDetailWatch">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span>Watch Online</span>
+              </button>
+              <button class="btn btn-glass" id="btnDetailDownload">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                <span>Download</span>
+              </button>
+              <button class="btn btn-secondary" id="btnDetailBookmark">
+                🤍 Add to Watchlist
+              </button>
+              <button class="btn btn-secondary" onclick="App.copyShareLink()" title="Share link">
+                🔗 Share
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Series Episodes Grid inside Details -->
+        <div id="detailEpisodeSection" style="display: none; margin-bottom: 2rem;">
+          <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+            📺 All Episodes
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.85rem;" id="detailEpisodeGrid"></div>
+        </div>
+
+        <!-- Comments & Reviews Section -->
+        <div class="comments-section">
+          <div class="comments-header">
+            <h4 style="font-size: 1.1rem; font-weight: 700;">💬 Viewer Reviews & Comments</h4>
+          </div>
+
+          <!-- Add Comment Form -->
+          <form class="comment-form" id="commentSubmitForm">
+            <div class="form-row" style="margin-bottom: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <input type="text" id="commentAuthorName" placeholder="Your Name" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <select id="commentRatingScore">
+                  <option value="5">⭐⭐⭐⭐⭐ Excellent (5 Stars)</option>
+                  <option value="4">⭐⭐⭐⭐ Great (4 Stars)</option>
+                  <option value="3">⭐⭐⭐ Good (3 Stars)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <textarea id="commentInputText" rows="2" placeholder="Write your review or memory about this cartoon..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <span>Post Review</span>
+            </button>
+          </form>
+
+          <!-- Comments List -->
+          <div class="comments-list" id="detailCommentsList">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Content Manager Modal (Add Custom Media) -->
+  <div class="modal-backdrop" id="addContentModal">
+    <div class="modal-container" style="max-width: 720px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 class="modal-title">Add New Content</h3>
+          <span class="modal-subtitle">Add Cartoons, Movies, Teledramas, K-Dramas &amp; Series</span>
+        </div>
+        <button class="btn-close-modal" id="btnCloseAddContentModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addContentForm">
+
+          <!-- Row 1: Titles -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title in English *</label>
+              <input type="text" id="addTitleEn" placeholder="e.g. Sujatha Diyaniya / Koombiyo / Soora Pappa" required />
+            </div>
+            <div class="form-group">
+              <label>Sinhala Name *</label>
+              <input type="text" id="addTitleSi" placeholder="e.g. සුජාත දියණිය / කූඹියෝ / සූර පප්පා" required />
+            </div>
+          </div>
+
+          <!-- Row 2: Type & Category -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Content Type</label>
+              <select id="addContentType">
+                <option value="series">Series (Multi-Episode)</option>
+                <option value="movie">Full Movie / Feature</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="addCategory">
+                <option value="cartoons">🦁 Cartoons (කාටූන්)</option>
+                <option value="movies">🎬 Dubbed Movies (චිත්‍රපට)</option>
+                <option value="teledramas">📺 Teledramas (ටෙලි නාට්‍ය)</option>
+                <option value="kdramas">🌸 K-Dramas (කොරියන් නාට්‍ය)</option>
+                <option value="cartoon_series">⚡ Cartoon Series (කතා මාලා)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 3: Channel (only for teledramas & kdramas) -->
+          <div id="channelFieldWrapper" style="display:none;">
+            <div class="form-group">
+              <label>TV Channel / Network</label>
+              <select id="addChannel">
+                <option value="Rupavahini">National Rupavahini (ජාතික රූපවාහිනී)</option>
+                <option value="Sirasa TV">Sirasa TV (සිරස TV)</option>
+                <option value="ITN">ITN (ස්වාධීන රූපවාහිනිය)</option>
+                <option value="Swarnavahini">Swarnavahini (ස්වර්ණවාහිනී)</option>
+                <option value="TV Derana">TV Derana (ටීවී දෙරණ)</option>
+                <option value="Hiru TV">Hiru TV (හිරු TV)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 4: Year & Rating -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Release Year</label>
+              <input type="number" id="addYear" value="2024" />
+            </div>
+            <div class="form-group">
+              <label>Rating (out of 10)</label>
+              <input type="number" id="addRating" step="0.1" value="9.8" />
+            </div>
+          </div>
+
+          <!-- Row 5: Poster & Backdrop image uploads -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>🖼 Poster Image (Upload)</label>
+              <input type="file" id="addPosterFile" accept="image/*" style="padding:0.5rem;" />
+              <input type="hidden" id="addPoster" value="assets/images/banner1.jpg" />
+              <small style="color:var(--text-muted);font-size:0.75rem;">Portrait 2:3 ratio recommended</small>
+            </div>
+            <div class="form-group">
+              <label>🖼 Backdrop / Hero Banner (Upload)</label>
+              <input type="file" id="addBackdropFile" accept="image/*" style="padding:0.5rem;" />
+              <input type="hidden" id="addBackdrop" value="assets/images/banner1.jpg" />
+              <small style="color:var(--text-muted);font-size:0.75rem;">Landscape 16:9 ratio recommended</small>
+            </div>
+          </div>
+
+          <!-- Synopsis -->
+          <div class="form-group">
+            <label>Story Synopsis</label>
+            <textarea id="addSynopsisEn" rows="2" placeholder="Brief story overview and description..." required></textarea>
+          </div>
+
+          <!-- Movie-only stream / download fields -->
+          <div id="movieExtraFields" style="display:none;">
+            <p style="font-weight:700;color:var(--accent-gold);margin-bottom:0.75rem;">🎬 Movie Links</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label>▶ Watch — Server 1 (Google Drive)</label>
+                <input type="url" id="addMovieStreamGdrive" placeholder="https://drive.google.com/..." />
+              </div>
+              <div class="form-group">
+                <label>▶ Watch — Server 2 (Stream / Embed)</label>
+                <input type="url" id="addMovieStreamBuzz" placeholder="https://... (Direct Stream / Embed URL)" />
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:0.75rem;">
+              <div class="form-group">
+                <label>⬇ Download — Server 1 (Google Drive)</label>
+                <input type="url" id="addMovieDlGdrive" placeholder="https://drive.google.com/..." />
+              </div>
+              <div class="form-group">
+                <label>⬇ Download — Server 2 (Cloud Mirror)</label>
+                <input type="url" id="addMovieDlBuzz" placeholder="https://... (Direct / Mirror Download URL)" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Series Episodes Section -->
+          <div id="seriesExtraFields">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+              <label style="font-weight: 700; color: var(--accent-gold);">📺 Episode List:</label>
+              <button type="button" class="btn btn-secondary btn-xs" id="btnAddEpisodeRow">➕ Add Episode</button>
+            </div>
+            <div id="customEpisodesList">
+              <!-- Dynamic episode rows -->
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+            <button type="button" class="btn btn-secondary" onclick="Manager.close()">Cancel</button>
+            <button type="submit" class="btn btn-primary">💾 Save to Database</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Request Content Modal -->
+  <div class="modal-backdrop" id="requestModal">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <h3 class="modal-title">Request Content</h3>
+          <span class="modal-subtitle">Request Cartoons, Movies, Teledramas or K-Dramas</span>
+        </div>
+        <button class="btn-close-modal" id="btnCloseRequestModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="requestForm">
+          <div class="form-group">
+            <label>Media Type</label>
+            <select id="reqMediaType" style="margin-bottom: 0.75rem;">
+              <option value="cartoons">🦁 Cartoon</option>
+              <option value="kdramas">🌸 Sinhala Dubbed K-Drama</option>
+              <option value="teledramas">📺 Sinhala Teledrama</option>
+              <option value="movies">🎬 Sinhala Dubbed Movie</option>
+              <option value="cartoon_series">⚡ Cartoon Series</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Title or Name *</label>
+            <input type="text" id="reqCartoonName" placeholder="e.g. Sujatha Diyaniya Ep 10, Soora Pappa, Koombiyo..." required />
+          </div>
+          <div class="form-group">
+            <label>Your Email or Contact (Optional)</label>
+            <input type="text" id="reqUserContact" placeholder="email@example.com / phone" />
+          </div>
+          <div class="form-group">
+            <label>Additional Notes / Details</label>
+            <textarea id="reqNotes" rows="3" placeholder="Specify preferred episodes, audio dub version, quality (1080p/720p)..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <span>Submit Request</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-item active" onclick="App.setCategory('all')">
+      <span class="icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="mobile-nav-item" onclick="App.setCategory('cartoons')">
+      <span class="icon">🦁</span>
+      <span>Cartoons</span>
+    </button>
+    <button class="mobile-nav-item" onclick="App.setCategory('kdramas')">
+      <span class="icon">🌸</span>
+      <span>K-Drama</span>
+    </button>
+    <button class="mobile-nav-item" onclick="App.setCategory('teledramas')">
+      <span class="icon">📺</span>
+      <span>Teledrama</span>
+    </button>
+    <button class="mobile-nav-item" onclick="App.setCategory('movies')">
+      <span class="icon">🎬</span>
+      <span>Movies</span>
+    </button>
+  </nav>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="brand-icon-box"><span>🎬</span></div>
+            <span class="brand-name">Sinhala<span style="color: #f59e0b;">Flix</span></span>
+          </div>
+          <p>Sri Lanka's ultimate digital entertainment archive for Sinhala dubbed cartoons, movies, legendary teledramas, hit K-Dramas, and cartoon series. Enjoy ultra-clear 1080p FHD & 720p streaming and high-speed direct downloads.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Explore Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="App.setCategory('all')">🌟 All Collection</a></li>
+            <li><a href="#" onclick="App.setCategory('cartoons')">🦁 Sinhala Cartoons</a></li>
+            <li><a href="#" onclick="App.setCategory('movies')">🎬 Dubbed Movies</a></li>
+            <li><a href="#" onclick="App.setCategory('teledramas')">📺 Sinhala Teledramas</a></li>
+            <li><a href="#" onclick="App.setCategory('kdramas')">🌸 Sinhala K-Dramas</a></li>
+            <li><a href="#" onclick="App.setCategory('cartoon_series')">⚡ Cartoon Series</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>TV Networks & Studios</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="App.setChannel('Rupavahini')">National Rupavahini</a></li>
+            <li><a href="#" onclick="App.setChannel('Sirasa TV')">Sirasa TV</a></li>
+            <li><a href="#" onclick="App.setChannel('ITN')">ITN Sri Lanka</a></li>
+            <li><a href="#" onclick="App.setChannel('Swarnavahini')">Swarnavahini</a></li>
+            <li><a href="#" onclick="App.setChannel('Studio Dub')">Studio Dubbing Units</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect & Community</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="App.openRequestModal()">✨ Request Content</a></li>
+            <li><a href="admin.html" style="color: var(--accent-gold); font-weight: 600;">🔒 Admin Portal</a></li>
+            <li><a href="#" onclick="App.setCategory('watchlist')">❤️ My Watchlist</a></li>
+            <li><a href="#" onclick="App.setCategory('continue')">🕒 History</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SinhalaFlix Hub. All Rights Reserved. A tribute to Sri Lankan voice dubbing artists, directors & creators.</span>
+        <span>Made with ❤️ for Sri Lankan Entertainment Lovers</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Javascript Modules -->
+  <script src="js/data.js?v=20260913_7"></script>
+  <script src="js/storage.js?v=20260913_7"></script>
+  <script src="js/player.js?v=20260913_7"></script>
+  <script src="js/download.js?v=20260913_7"></script>
+  <script src="js/content-manager.js?v=20260913_7"></script>
+  <script src="js/app.js?v=20260913_7"></script>
+</body>
+</html>
