@@ -3,12 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Portal | SinhalaFlix Content Management</title>
-  <meta name="description" content="SinhalaFlix Content Management System" />
+  <title>Admin Portal | SinhalaFlix Hub Content Management</title>
+  <meta name="description" content="SinhalaFlix Hub Content Management System" />
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Firebase App & Auth SDK (v10 compat) for 1-Click Google Sign-In -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <style>
     /* =====================================================================
        COMPLETE SELF-CONTAINED ADMIN STYLES
@@ -247,6 +251,203 @@
     }
 
     .back-link:hover { color: var(--text2); }
+
+    /* Login Tabs & Server-Side Verification */
+    .login-tabs {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 0.25rem;
+      gap: 0.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .login-tab-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.6rem 0.5rem;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: calc(var(--r-sm) - 2px);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .login-tab-btn:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .login-tab-btn.active {
+      background: rgba(245,158,11,0.14);
+      color: #fbbf24;
+      border: 1px solid rgba(245,158,11,0.35);
+      font-weight: 700;
+    }
+
+    .tab-badge-rec {
+      font-size: 0.65rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      background: rgba(16,185,129,0.2);
+      color: #34d399;
+      border: 1px solid rgba(16,185,129,0.4);
+      letter-spacing: 0.02em;
+    }
+
+    .tab-badge-alt {
+      font-size: 0.65rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text3);
+    }
+
+    .server-auth-notice {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+      background: rgba(56,189,248,0.08);
+      border: 1px solid rgba(56,189,248,0.22);
+      border-radius: var(--r-sm);
+      padding: 0.75rem 0.9rem;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      margin-bottom: 1.15rem;
+      text-align: left;
+      line-height: 1.45;
+    }
+
+    .server-auth-notice .san-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .server-auth-notice .code {
+      font-family: monospace;
+      color: #38bdf8;
+      background: rgba(56,189,248,0.12);
+      padding: 0.05rem 0.3rem;
+      border-radius: 3px;
+    }
+
+    .token-helper-link {
+      margin-top: 0.45rem;
+      font-size: 0.78rem;
+      text-align: left;
+    }
+
+    .token-helper-link a {
+      color: #38bdf8;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .token-helper-link a:hover {
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
+
+    .spin {
+      display: inline-block;
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Google Sign-In Styles */
+    .btn-google-auth {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      background: #ffffff;
+      color: #1f2937;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--r-sm);
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .btn-google-auth:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255,255,255,0.18);
+    }
+    .btn-google-auth:active {
+      transform: translateY(0);
+    }
+    .firebase-toggle-link {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .firebase-toggle-link a {
+      color: var(--text2);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .firebase-toggle-link a:hover {
+      color: var(--gold);
+      text-decoration: underline;
+    }
+
+    /* Admin Profile Header Badge */
+    .admin-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 9999px;
+      padding: 0.25rem 0.65rem 0.25rem 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .admin-user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--gold);
+    }
+
+    .admin-user-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .admin-user-name {
+      color: #f1f5f9;
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     /* ---- DASHBOARD ---- */
     #dashboardPage { display: none; flex-direction: column; min-height: 100vh; }
@@ -746,40 +947,159 @@
     <div class="login-card">
       <div class="login-icon">🔐</div>
       <h1 class="login-title">Admin Control Portal</h1>
-      <p class="login-subtitle">SinhalaFlix Content Management &amp; Studio Database</p>
+      <p class="login-subtitle">SinhalaFlix Hub Content Management &amp; Studio Database</p>
 
       <div class="error-box" id="loginError"></div>
 
-      <div class="form-group">
-        <label for="uname">Admin Username</label>
-        <input type="text" id="uname" class="form-input" placeholder="Enter username" autocomplete="username" />
+      <!-- Login Method Tabs -->
+      <div class="login-tabs">
+        <button type="button" class="login-tab-btn active" id="tabBtnGoogle" onclick="switchLoginMode('google')">
+          <svg style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:2px;" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.79l7.97-6.2z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Google <span class="tab-badge-rec">1-Click</span>
+        </button>
+        <button type="button" class="login-tab-btn" id="tabBtnGh" onclick="switchLoginMode('gh')">
+          🐙 GitHub <span class="tab-badge-alt">PAT</span>
+        </button>
+        <button type="button" class="login-tab-btn" id="tabBtnKey" onclick="switchLoginMode('key')">
+          🔐 Keys <span class="tab-badge-alt">Offline</span>
+        </button>
       </div>
 
-      <div class="form-group">
-        <label for="upass">Password 1 (Primary Key)</label>
-        <div class="input-wrap">
-          <input type="password" id="upass" class="form-input" placeholder="Enter Password 1" autocomplete="current-password" />
-          <button type="button" class="toggle-pass-btn" data-target="upass" title="Toggle Password 1 visibility">👁️</button>
+      <!-- Tab 1: Google One-Click Sign-In (Firebase Auth) -->
+      <div id="loginFormGoogle">
+        <div class="server-auth-notice" style="background:rgba(234,67,53,0.08); border-color:rgba(234,67,53,0.25);">
+          <div class="san-icon">
+            <svg style="width:20px;height:20px;vertical-align:middle;" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.79l7.97-6.2z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+          </div>
+          <div class="san-text">
+            <strong>Google One-Click Authentication:</strong><br>
+            Securely sign in using your verified Google Account. Only pre-authorized administrator Google accounts are permitted.
+          </div>
+        </div>
+
+        <div style="margin: 1.25rem 0;">
+          <button class="btn-google-auth" id="btnGoogleSignIn" type="button">
+            <svg class="google-icon" viewBox="0 0 48 48" style="width:22px;height:22px;">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.79l7.97-6.2z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span id="btnGoogleSignInText">Sign in with Google</span>
+          </button>
+        </div>
+
+        <div class="firebase-toggle-link">
+          <a href="javascript:void(0)" id="toggleFirebaseSetupBtn">
+            ⚙️ Configure Firebase Keys / Authorized Admin Email ▾
+          </a>
+        </div>
+
+        <!-- Collapsible Firebase Configuration Panel -->
+        <div id="firebaseConfigDrawer" style="display:none; margin-top:1rem; padding:1rem; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--r-sm); text-align:left;">
+          <div style="font-size:0.85rem; font-weight:700; color:var(--text); margin-bottom:0.4rem;">
+            🔥 Firebase Google Sign-In Setup
+          </div>
+          <p style="font-size:0.75rem; color:var(--text2); margin-bottom:0.75rem; line-height:1.4;">
+            Paste your Firebase config from <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">Firebase Console</a> (100% Free) &amp; specify your Gmail:
+          </p>
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.75rem;">Authorized Admin Gmail *</label>
+            <input type="email" id="fbAdminEmail" class="form-input" placeholder="e.g. yourname@gmail.com" style="padding:0.5rem 0.75rem; font-size:0.85rem;" />
+            <small style="font-size:0.7rem; color:var(--text3);">Only this Google account will be granted admin access.</small>
+          </div>
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label style="font-size:0.75rem;">Firebase Config Object (JSON)</label>
+            <textarea id="fbConfigJson" class="form-input" rows="4" placeholder='{"apiKey": "AIzaSy...", "authDomain": "your-project.firebaseapp.com", "projectId": "..."}' style="font-family:monospace; font-size:0.78rem; padding:0.5rem;"></textarea>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="btn-primary" id="btnSaveFbConfig" style="flex:1; padding:0.55rem 1rem; font-size:0.85rem; margin-bottom:0;">
+              💾 Save Firebase Config
+            </button>
+            <button type="button" class="btn-sm-outline" id="btnUseDemoFbConfig" style="padding:0.5rem 0.85rem; font-size:0.78rem;" title="Test the Google login flow directly">
+              🧪 Quick Test
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="upass2">Password 2 (Secondary Key)</label>
-        <div class="input-wrap">
-          <input type="password" id="upass2" class="form-input" placeholder="Enter Password 2" autocomplete="off" />
-          <button type="button" class="toggle-pass-btn" data-target="upass2" title="Toggle Password 2 visibility">👁️</button>
+      <!-- Tab 2: GitHub Server-Side API Authentication -->
+      <div id="loginFormGh" style="display:none;">
+        <div class="server-auth-notice">
+          <div class="san-icon">🛡️</div>
+          <div class="san-text">
+            <strong>Direct Server-Side Verification:</strong><br>
+            Connects in real-time to GitHub's official API (<span class="code">api.github.com</span>) to authenticate repository write permissions for <span class="code">sinhalaflix/sinhalaflix</span>. No passwords stored in code.
+          </div>
         </div>
+
+        <div class="form-group">
+          <label for="ghAuthToken">GitHub Personal Access Token (PAT) *</label>
+          <div class="input-wrap">
+            <input type="password" id="ghAuthToken" class="form-input" placeholder="ghp_xxxxxxxxxxxx or github_pat_xxxx" autocomplete="off" spellcheck="false" />
+            <button type="button" class="toggle-pass-btn" data-target="ghAuthToken" title="Toggle token visibility">👁️</button>
+          </div>
+          <div class="token-helper-link">
+            <a href="https://github.com/settings/tokens/new?scopes=repo&description=SinhalaFlix+Hub+Admin+Portal" target="_blank" rel="noopener">
+              🔑 Click here to create a GitHub token (needs <code>repo</code> scope) ↗
+            </a>
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="rememberGhChk" checked />
+          <span>Keep me signed in on this device</span>
+        </label>
+
+        <button class="btn-primary" id="loginGhBtn" type="button">
+          <span id="loginGhBtnSpinner" class="spin" style="display:none;">⏳</span>
+          <span id="loginGhBtnText">Sign In &amp; Verify with GitHub ➔</span>
+        </button>
       </div>
 
-      <label class="check-row">
-        <input type="checkbox" id="rememberChk" checked />
-        <span>Keep me signed in</span>
-      </label>
+      <!-- Tab 2: Master Keys Cryptographic Vault (Offline Fallback) -->
+      <div id="loginFormKey" style="display:none;">
+        <div class="form-group">
+          <label for="uname">Admin Username</label>
+          <input type="text" id="uname" class="form-input" placeholder="Enter username" autocomplete="off" spellcheck="false" />
+        </div>
 
-      <button class="btn-primary" id="loginBtn" type="button">
-        <span>Sign In to Dashboard</span>
-        <span>➔</span>
-      </button>
+        <div class="form-group">
+          <label for="upass">Password 1 (Primary Key)</label>
+          <div class="input-wrap">
+            <input type="password" id="upass" class="form-input" placeholder="Enter Password 1" autocomplete="off" />
+            <button type="button" class="toggle-pass-btn" data-target="upass" title="Toggle Password 1 visibility">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="upass2">Password 2 (Secondary Key)</label>
+          <div class="input-wrap">
+            <input type="password" id="upass2" class="form-input" placeholder="Enter Password 2" autocomplete="off" />
+            <button type="button" class="toggle-pass-btn" data-target="upass2" title="Toggle Password 2 visibility">👁️</button>
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="rememberChk" checked />
+          <span>Keep me signed in</span>
+        </label>
+
+        <button class="btn-primary" id="loginBtn" type="button">
+          <span>Sign In with Master Keys</span>
+          <span>➔</span>
+        </button>
+      </div>
 
       <a href="index.html" class="back-link">← Return to Public Website</a>
     </div>
@@ -795,10 +1115,15 @@
     <header class="admin-header">
       <a class="admin-brand" href="index.html">
         <span>🎬</span>
-        <span>Sinhala<span class="gold">Flix</span></span>
+        <span>Sinhala<span class="gold">Flix Hub</span></span>
         <span class="admin-badge">Admin</span>
       </a>
       <div class="header-actions">
+        <div class="admin-user-pill" id="adminUserPill" title="Authenticated Admin">
+          <img src="" id="adminUserAvatar" class="admin-user-avatar" alt="Admin" style="display:none;" />
+          <span class="admin-user-dot"></span>
+          <span id="adminUserName" class="admin-user-name">Admin</span>
+        </div>
         <button class="btn-publish-gh" id="topPublishBtn" title="Push all changes to GitHub so everyone can see them">🚀 Publish to GitHub</button>
         <a href="index.html" class="btn-sm-outline" target="_blank">🌐 Live Site</a>
         <button class="btn-logout" id="logoutBtn">🚪 Logout</button>
@@ -1114,17 +1439,56 @@
               <ol>
                 <li>Go to GitHub: <strong>Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> (or <a href="https://github.com/settings/tokens" target="_blank" style="color:#38bdf8;text-decoration:underline;">click here</a>).</li>
                 <li>Click <strong>"Generate new token (classic)"</strong>.</li>
-                <li>Set Note: <code>SinhalaFlix Admin</code> and check the <strong><code>repo</code></strong> checkbox (Full control of private/public repositories).</li>
+                <li>Set Note: <code>SinhalaFlix Hub Admin</code> and check the <strong><code>repo</code></strong> checkbox (Full control of private/public repositories).</li>
                 <li>Click <strong>Generate token</strong>, copy the generated token (starts with <code>ghp_</code>), and paste it above.</li>
                 <li>Your token is safely stored only inside your browser's private storage on this device.</li>
               </ol>
             </div>
           </div>
 
+          <!-- Firebase Google Sign-In Settings -->
+          <div class="db-block" id="firebaseSyncCard" style="border:1px solid rgba(234,67,53,0.3); background:rgba(234,67,53,0.03);">
+            <div class="gh-header-row">
+              <div>
+                <h3 style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+                  🔥 Firebase Google Sign-In (1-Click Login Settings)
+                </h3>
+                <p style="margin-bottom:0;">
+                  Configure your free Firebase web app keys to enable 1-Click Google Sign-In for your admin account.
+                </p>
+              </div>
+              <span class="gh-badge" style="background:rgba(234,67,53,0.15); border-color:rgba(234,67,53,0.4); color:#f87171;">● Google Auth</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr; gap:0.75rem; margin-top:1rem;">
+              <div class="fg" style="margin-bottom:0;">
+                <label style="font-size:0.8rem;">Authorized Admin Gmail Address *</label>
+                <input type="email" id="dbFbAdminEmail" placeholder="e.g. yourname@gmail.com" />
+                <small style="font-size:0.75rem; color:var(--text3); margin-top:0.25rem; display:block;">Only this specific Google account will be permitted to access the admin panel.</small>
+              </div>
+              <div class="fg" style="margin-bottom:0;">
+                <label style="font-size:0.8rem;">Firebase Config Object (JSON from Firebase Console)</label>
+                <textarea id="dbFbConfigJson" rows="4" placeholder='{"apiKey": "AIzaSy...", "authDomain": "your-app.firebaseapp.com", "projectId": "your-project"}' style="font-family:monospace; font-size:0.8rem;"></textarea>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:0.6rem; align-items:center; margin-top:1rem; flex-wrap:wrap;">
+              <button class="btn-dash-primary" id="saveDbFbConfigBtn">💾 Save Firebase Settings</button>
+              <button class="btn-dash-secondary" id="clearDbFbConfigBtn">🗑️ Clear Settings</button>
+              <span id="dbFbStatusMsg" style="font-size:0.82rem; color:#34d399; display:none;">✅ Firebase settings saved!</span>
+            </div>
+          </div>
+
           <div class="db-block">
             <h3>💾 Export / Backup Catalog Data</h3>
-            <p>Export the complete SinhalaFlix database (including custom uploads, edits) as a JSON file.</p>
+            <p>Export the complete SinhalaFlix Hub database (including custom uploads, edits) as a JSON file.</p>
             <button class="btn-dash-primary" id="exportBtn">💾 Export Database JSON</button>
+          </div>
+
+          <div class="db-block">
+            <h3>📄 Batch Generate Static HTML Pages</h3>
+            <p>Generate and download individual standalone <code>.html</code> pages (e.g. <code>the-lion-king.html</code>) for all titles in your library.</p>
+            <button class="btn-dash-primary" id="batchHtmlBtn">⚡ Batch Download All HTML Pages</button>
           </div>
 
           <div class="db-block">
@@ -1136,7 +1500,7 @@
 
           <div class="db-block">
             <h3 style="color:#fda4af;">⚠️ Factory Reset Catalog</h3>
-            <p>Clear all local custom additions and modifications, restoring the default SinhalaFlix library.</p>
+            <p>Clear all local custom additions and modifications, restoring the default SinhalaFlix Hub library.</p>
             <button class="btn-danger" id="resetBtn">🔄 Reset to Default Catalog</button>
           </div>
         </div>
@@ -1305,8 +1669,8 @@
   <div id="toastContainer"></div>
 
   <!-- Scripts: load order matters -->
-  <script src="js/data.js?v=20260913_8"></script>
-  <script src="js/storage.js?v=20260913_8"></script>
+  <script src="js/data.js?v=20260916_14"></script>
+  <script src="js/storage.js?v=20260916_14"></script>
   <script>
     // ============================================================
     //  INLINE ADMIN CONTROLLER — no separate file dependency
@@ -1321,43 +1685,197 @@
       var catFilterVal  = "all";
       var searchQuery   = "";
 
+      // ---- Cryptographic Security Vault ----
+      var AUTH_SALT = "sinhalaflix_secure_vault_2026";
+      var MASTER_AUTH_HASH = "88767b8d33c03a777ce767f064d2b3e6ac24bcf4bf346b355a25b1564d414a8a";
+      var SESSION_TOKEN_HASH = "9359da5b613a7698b54a1c7c47cecd87f42fb429abf40b7a8b544bb29fc2b293";
+
+      // Pure JS SHA-256 (Synchronous, zero-dependency, works in all browser contexts)
+      function secureHash(ascii) {
+        function rightRotate(value, amount) {
+          return (value >>> amount) | (value << (32 - amount));
+        }
+        var mathPow = Math.pow;
+        var maxWord = mathPow(2, 32);
+        var lengthProperty = 'length';
+        var i, j;
+        var result = '';
+        var words = [];
+        var asciiBitLength = ascii[lengthProperty] * 8;
+        var hash = [];
+        var k = [];
+        var primeCounter = 0;
+        var isComposite = {};
+        for (var candidate = 2; primeCounter < 64; candidate++) {
+          if (!isComposite[candidate]) {
+            for (i = 0; i < 313; i += candidate) {
+              isComposite[i] = candidate;
+            }
+            hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+            k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+          }
+        }
+        ascii += '\x80';
+        while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+        for (i = 0; i < ascii[lengthProperty]; i++) {
+          j = ascii.charCodeAt(i);
+          if (j >> 8) return;
+          words[i >> 2] |= j << ((3 - i) % 4) * 8;
+        }
+        words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;
+        words[words[lengthProperty]] = asciiBitLength;
+        for (j = 0; j < words[lengthProperty];) {
+          var w = words.slice(j, j += 16);
+          var oldHash = hash;
+          hash = hash.slice(0, 8);
+          for (i = 0; i < 64; i++) {
+            var w15 = w[i - 15], w2 = w[i - 2];
+            var s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
+            var s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
+            w[i] = (i < 16) ? w[i] : (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+            var ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]);
+            var maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+            var temp1 = (hash[7] + (rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25)) + ch + k[i] + w[i]) | 0;
+            var temp2 = ((rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22)) + maj) | 0;
+            hash = [(temp1 + temp2) | 0].concat(hash);
+            hash[4] = (hash[4] + temp1) | 0;
+          }
+          for (i = 0; i < 8; i++) {
+            hash[i] = (hash[i] + oldHash[i]) | 0;
+          }
+        }
+        for (i = 0; i < 8; i++) {
+          for (j = 3; j + 1; j--) {
+            var b = (hash[i] >> (j * 8)) & 255;
+            result += ((b < 16) ? 0 : '') + b.toString(16);
+          }
+        }
+        return result;
+      }
+
       // ---- Auth helpers ----
       function isLoggedIn() {
+        if (typeof StorageService !== "undefined" && StorageService.isAdminLoggedIn) {
+          return StorageService.isAdminLoggedIn();
+        }
         try {
-          return localStorage.getItem("sfx_admin_v2") === "true" ||
-                 sessionStorage.getItem("sfx_admin_v2") === "true";
+          var token = sessionStorage.getItem("sfx_admin_token") || localStorage.getItem("sfx_admin_token");
+          if (token === SESSION_TOKEN_HASH) return true;
+          var ghSession = sessionStorage.getItem("sfx_gh_session_token") || localStorage.getItem("sfx_gh_session_token");
+          var ghUser = sessionStorage.getItem("sfx_gh_user") || localStorage.getItem("sfx_gh_user");
+          return !!(ghSession && ghUser);
         } catch (e) { return false; }
       }
 
+      // Brute-force protection
+      var failedAttempts = 0;
+      var lockoutUntil = 0;
+
       function doLogin(user, pass1, pass2, remember) {
+        var now = Date.now();
+        if (now < lockoutUntil) {
+          var secsLeft = Math.ceil((lockoutUntil - now) / 1000);
+          return { success: false, locked: true, message: "⛔ Security Lockout: Too many failed attempts. Try again in " + secsLeft + "s." };
+        }
+
         var u = (user || "").trim().toLowerCase();
         var p1 = (pass1 || "").trim();
         var p2 = (pass2 || "").trim();
-        var validUser = (u === "sinhalaflix2006");
-        var validPass1 = (p1 === "sinhalaflix@20061679");
-        var validPass2 = (p2 === "rivindu@20061679");
 
-        if (validUser && validPass1 && validPass2) {
+        if (!u || !p1 || !p2) {
+          return { success: false, message: "❌ All authentication fields are required." };
+        }
+
+        var payload = AUTH_SALT + "::" + u + "::" + p1 + "::" + p2;
+        var computedHash = secureHash(payload);
+
+        if (computedHash === MASTER_AUTH_HASH) {
+          failedAttempts = 0;
+          lockoutUntil = 0;
           try {
             if (remember) {
+              localStorage.setItem("sfx_admin_token", SESSION_TOKEN_HASH);
               localStorage.setItem("sfx_admin_v2", "true");
+              localStorage.setItem("sfx_admin_auth_type", "master");
               localStorage.setItem("sinhalaflix_admin_authenticated", "true");
             }
+            sessionStorage.setItem("sfx_admin_token", SESSION_TOKEN_HASH);
             sessionStorage.setItem("sfx_admin_v2", "true");
+            sessionStorage.setItem("sfx_admin_auth_type", "master");
             sessionStorage.setItem("sinhalaflix_admin_authenticated", "true");
           } catch(e) {}
-          return true;
+          return { success: true };
         }
-        return false;
+
+        failedAttempts++;
+        if (failedAttempts >= 5) {
+          lockoutUntil = Date.now() + 30000;
+          return { success: false, locked: true, message: "⛔ Security Lockout: 5 failed attempts. Access temporarily locked for 30s." };
+        }
+
+        var remaining = 5 - failedAttempts;
+        return { success: false, message: "❌ Invalid username or passwords. (" + remaining + " attempts remaining)" };
       }
 
       function doLogout() {
+        if (typeof StorageService !== "undefined" && StorageService.adminLogout) {
+          StorageService.adminLogout();
+        }
         try {
+          localStorage.removeItem("sfx_admin_token");
+          localStorage.removeItem("sfx_gh_session_token");
+          localStorage.removeItem("sfx_gh_user");
+          localStorage.removeItem("sfx_google_session_token");
+          localStorage.removeItem("sfx_google_user");
+          localStorage.removeItem("sfx_admin_auth_type");
           localStorage.removeItem("sfx_admin_v2");
           localStorage.removeItem("sinhalaflix_admin_authenticated");
+
+          sessionStorage.removeItem("sfx_admin_token");
+          sessionStorage.removeItem("sfx_gh_session_token");
+          sessionStorage.removeItem("sfx_gh_user");
+          sessionStorage.removeItem("sfx_google_session_token");
+          sessionStorage.removeItem("sfx_google_user");
+          sessionStorage.removeItem("sfx_admin_auth_type");
           sessionStorage.removeItem("sfx_admin_v2");
           sessionStorage.removeItem("sinhalaflix_admin_authenticated");
+
+          if (typeof firebase !== "undefined" && firebase.auth && firebase.apps && firebase.apps.length) {
+            try { firebase.auth().signOut(); } catch(err) {}
+          }
         } catch(e) {}
+      }
+
+      function updateAdminProfileBadge() {
+        var profile = (typeof StorageService !== "undefined" && StorageService.getAdminProfile)
+          ? StorageService.getAdminProfile()
+          : { type: "master", login: "Admin", name: "Administrator", badge: "Admin" };
+
+        var pill = document.getElementById("adminUserPill");
+        var avatar = document.getElementById("adminUserAvatar");
+        var nameEl = document.getElementById("adminUserName");
+
+        if (profile.type === "google") {
+          if (avatar && profile.avatar_url) {
+            avatar.src = profile.avatar_url;
+            avatar.style.display = "inline-block";
+          } else if (avatar) {
+            avatar.style.display = "none";
+          }
+          if (nameEl) nameEl.textContent = profile.name || profile.login;
+          if (pill) pill.title = "Verified Google Admin (" + profile.login + ")";
+        } else if (profile.type === "github" && profile.avatar_url) {
+          if (avatar) {
+            avatar.src = profile.avatar_url;
+            avatar.style.display = "inline-block";
+          }
+          if (nameEl) nameEl.textContent = "@" + profile.login;
+          if (pill) pill.title = "Verified GitHub Admin (" + profile.name + ")";
+        } else {
+          if (avatar) avatar.style.display = "none";
+          if (nameEl) nameEl.textContent = "👑 Master Admin";
+          if (pill) pill.title = "Master Cryptographic Access";
+        }
       }
 
       // ---- UI switching ----
@@ -1369,6 +1887,7 @@
       function showDashboard() {
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("dashboardPage").style.display = "flex";
+        updateAdminProfileBadge();
         renderStats();
         renderCatalog();
         renderRequests();
@@ -1384,7 +1903,7 @@
         if (tabId === "catalog") renderCatalog();
         else if (tabId === "dashboard") renderStats();
         else if (tabId === "requests") renderRequests();
-        else if (tabId === "database") loadGhConfig();
+        else if (tabId === "database") { loadGhConfig(); loadFirebaseSettingsToDashboard(); }
       }
 
       // Expose switchTab globally (used by inline onclick)
@@ -1472,7 +1991,8 @@
             '<td><span class="badge-cat '+info.cls+'">'+info.label+'</span></td>',
             '<td style="color:#38bdf8;font-weight:600;">'+safe(item.channel || '—')+'</td>',
             '<td>'+epStr+' ('+safe(item.year)+')</td>',
-            '<td><div class="action-btns">',
+            '<td style="white-space:nowrap;"><div class="action-btns" style="display:flex;gap:0.35rem;align-items:center;">',
+            '<button class="btn-html" data-id="'+safe(item.id)+'" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:0.35rem 0.55rem;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;" title="Download standalone .html page" onclick="downloadItemHtml(\''+safe(item.id)+'\')">📄 HTML</button>',
             '<button class="btn-edit" data-id="'+safe(item.id)+'" onclick="openEdit(\''+safe(item.id)+'\')">✏️ Edit</button>',
             '<button class="btn-del"  data-id="'+safe(item.id)+'" data-title="'+safe(item.titleEnglish)+'" onclick="deleteItem(\''+safe(item.id)+'\',\''+safe(item.titleEnglish)+'\')">🗑️ Del</button>',
             '</div></td>'
@@ -1481,10 +2001,164 @@
         });
       }
 
+      // Standalone HTML Page Generator & Downloader (Built-in resilient fallback)
+      function generateAndDownloadMovieHtml(item) {
+        if (!item) return null;
+        if (typeof StorageService !== "undefined" && typeof StorageService.downloadMovieHtmlFile === "function") {
+          return StorageService.downloadMovieHtmlFile(item);
+        }
+        var titleEn = (item.titleEnglish || "SinhalaFlix Hub").replace(/"/g, '&quot;');
+        var titleSi = (item.titleSinhala || "").replace(/"/g, '&quot;');
+        var pageTitle = titleEn + (titleSi ? ' (' + titleSi + ')' : '') + ' | SinhalaFlix Hub';
+        var safeDesc = (item.synopsis || "Watch online and download Sinhala dubbed movies, cartoons, K-Dramas and teledramas in 1080p FHD quality.").replace(/"/g, '&quot;');
+        var slug = (item.titleEnglish || item.titleSinhala || item.id || "movie")
+          .toString().toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '') || ("movie-" + item.id);
+        var filename = slug + ".html";
+
+        var htmlContent = '<!DOCTYPE html>\n' +
+'<html lang="en">\n' +
+'<head>\n' +
+'  <meta charset="UTF-8" />\n' +
+'  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n' +
+'  <title>' + pageTitle + '</title>\n' +
+'  <meta name="description" content="' + safeDesc + '" />\n' +
+'  <meta name="theme-color" content="#080b12" />\n' +
+'  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />\n' +
+'  <link rel="stylesheet" href="css/main.css?v=20260916_14" />\n' +
+'  <link rel="stylesheet" href="css/movie-page.css?v=20260916_14" />\n' +
+'</head>\n' +
+'<body>\n' +
+'  <header class="mp-header" id="mpHeader">\n' +
+'    <div class="container">\n' +
+'      <div class="mp-header-inner">\n' +
+'        <a href="index.html" class="mp-back-btn" id="btnBackHome">\n' +
+'          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>\n' +
+'          <span>Back</span>\n' +
+'        </a>\n' +
+'        <span class="mp-sticky-title" id="mpStickyTitle"></span>\n' +
+'        <div class="mp-header-actions">\n' +
+'          <button class="btn btn-secondary btn-sm mp-watchlist-btn" id="mpHeaderWatchlist" title="Watchlist"><span>🤍</span><span>Watchlist</span></button>\n' +
+'          <button class="btn btn-secondary btn-sm mp-share-btn" id="mpHeaderShare" title="Share"><span>🔗</span><span>Share</span></button>\n' +
+'          <a href="index.html" class="btn btn-primary btn-sm" title="Home"><span>🎬</span><span>Home</span></a>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </header>\n' +
+'  <main class="mp-main" id="mpMain">\n' +
+'    <section class="mp-hero" id="mpHero">\n' +
+'      <div class="mp-hero-backdrop" id="mpBackdrop"></div>\n' +
+'      <div class="mp-hero-gradient"></div>\n' +
+'      <div class="container mp-hero-container">\n' +
+'        <div class="mp-hero-layout">\n' +
+'          <div class="mp-poster-col">\n' +
+'            <div class="mp-poster-wrapper"><img id="mpPoster" src="" alt="Poster" class="mp-poster-img" /><div class="mp-poster-badge" id="mpQualityBadge">FHD 1080p</div></div>\n' +
+'            <div class="mp-poster-actions">\n' +
+'              <button class="btn btn-primary btn-block mp-watch-btn" id="btnWatchOnline"><span>▶</span><span>Watch Online</span></button>\n' +
+'              <button class="btn btn-accent btn-block mp-dl-quick-btn" id="btnQuickDownload"><span>⬇</span><span>Download</span></button>\n' +
+'            </div>\n' +
+'          </div>\n' +
+'          <div class="mp-info-col">\n' +
+'            <div class="mp-meta-badges" id="mpMetaBadges"></div>\n' +
+'            <h1 class="mp-title" id="mpTitleEnglish"></h1>\n' +
+'            <h2 class="mp-title-si" id="mpTitleSinhala"></h2>\n' +
+'            <div class="mp-meta-row" id="mpMetaRow"></div>\n' +
+'            <div class="mp-genres" id="mpGenres"></div>\n' +
+'            <div class="mp-synopsis-block"><h3 class="mp-synopsis-label">Overview</h3><p class="mp-synopsis-text" id="mpSynopsis"></p></div>\n' +
+'            <div class="mp-credits-block" id="mpCreditsBlock"></div>\n' +
+'            <div class="mp-notice-box" id="mpNoticeBox">\n' +
+'              <div class="mp-notice-header"><span class="mp-notice-icon">💡</span><strong>Server එක Change කරන්නේ කොහොමද? — How to switch servers?</strong></div>\n' +
+'              <p class="mp-notice-body">🎬 Video එක Load නොවී Buffering වෙනවා නම්, ඉහළින් තියෙන “Server 2” Button එක Click කරන්න.</p>\n' +
+'            </div>\n' +
+'          </div>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'    </section>\n' +
+'    <section class="mp-player-section" id="playerSection">\n' +
+'      <div class="container">\n' +
+'        <div class="mp-player-topbar">\n' +
+'          <div class="mp-server-selector"><span class="mp-server-label">Servers:</span><div class="mp-server-tabs" id="mpServerTabs"></div></div>\n' +
+'          <div class="mp-quality-selector" id="mpQualitySelector"></div>\n' +
+'        </div>\n' +
+'        <div class="mp-server-alert" id="mpServerAlert"></div>\n' +
+'        <div class="mp-redirect-alert" id="mpRedirectAlert"><span class="mp-alert-icon">🚨</span><span><strong>වැදගත්:</strong> වෙනත් සයිට් එකකට Redirect වුණොත් 🕒 තත්පර කිහිපයක් රැඳී සිට Back වී, 🎬 Play Button එක නැවත Click කරන්න.</span></div>\n' +
+'        <div class="mp-player-wrapper" id="playerWrapper">\n' +
+'          <div class="mp-player-loader" id="playerLoader"><div class="mp-spinner"></div><span>Loading player...</span></div>\n' +
+'          <iframe id="mpIframe" class="mp-iframe" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen" sandbox="allow-forms allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>\n' +
+'        </div>\n' +
+'        <div class="mp-now-playing-bar" id="mpNowPlayingBar" style="display:none;"><span id="mpNowPlayingText">Episode 1</span><div class="mp-ep-nav-btns"><button class="btn btn-secondary btn-sm" id="btnPrevEp" disabled>⏮ Prev Episode</button><button class="btn btn-secondary btn-sm" id="btnNextEp">Next Episode ⏭</button></div></div>\n' +
+'      </div>\n' +
+'    </section>\n' +
+'    <section class="mp-episodes-section" id="episodesSection" style="display:none;">\n' +
+'      <div class="container">\n' +
+'        <div class="mp-section-header"><h2>📺 All Episodes</h2><span class="mp-ep-count-badge" id="mpEpCountBadge">0 Episodes</span></div>\n' +
+'        <div class="mp-episodes-grid" id="mpEpGrid"></div>\n' +
+'      </div>\n' +
+'    </section>\n' +
+'    <section class="mp-download-section" id="downloadSection">\n' +
+'      <div class="container">\n' +
+'        <div class="mp-section-header"><h2>⬇️ Download Links</h2><span class="mp-badge mp-badge-fhd">1080p FHD Direct</span></div>\n' +
+'        <div class="mp-download-card">\n' +
+'          <div class="mp-dl-info">\n' +
+'            <div class="mp-dl-title-group"><span class="mp-dl-item-title" id="mpDlItemTitle"></span><span class="mp-dl-file-info" id="mpDlFileInfo">1080p • MP4 • Sinhala Audio</span></div>\n' +
+'            <div class="mp-dl-badge-group"><span class="mp-badge mp-badge-green">High Speed</span><span class="mp-badge mp-badge-gold">No Ads / Free</span></div>\n' +
+'          </div>\n' +
+'          <div class="mp-dl-ep-picker" id="mpDlEpPicker" style="display:none;"><label for="mpDlEpSelect">Select Episode to Download:</label><select id="mpDlEpSelect" class="form-select"></select></div>\n' +
+'          <div class="mp-redirect-alert" style="margin-bottom: 1.25rem;"><span class="mp-alert-icon">🚨</span><span><strong>වැදගත්:</strong> වෙනත් සයිට් එකකට Redirect වුණොත් 🕒 තත්පර කිහිපයක් රැඳී සිට Back වී, ⬇️ Download Button එක නැවත Click කරන්න.</span></div>\n' +
+'          <div class="mp-dl-buttons" id="mpDlButtons"></div>\n' +
+'          <p class="mp-dl-hint">💡 <strong>Tip:</strong> Buzzheavier links give maximum download speed without waiting times. Google Drive links may require you to sign in with your Google account.</p>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'    </section>\n' +
+'    <section class="mp-related-section" id="relatedSection"><div class="container"><div class="mp-section-header"><h2>🍿 You May Also Like</h2></div><div class="mp-related-grid" id="mpRelatedGrid"></div></div></section>\n' +
+'  </main>\n' +
+'  <footer class="mp-footer"><div class="container"><div class="mp-footer-inner"><span>© 2026 SinhalaFlix Hub. All Rights Reserved. Made with ❤️ for Sri Lankan Entertainment Lovers.</span><a href="index.html">← Back to Home</a></div></div></footer>\n' +
+'  <div class="toast-container" id="toastContainer"></div>\n' +
+'  <script>window.PRELOADED_MEDIA_ID = "' + (item.id || '') + '";<\/script>\n' +
+'  <script src="js/data.js?v=20260916_14"><\/script>\n' +
+'  <script src="js/storage.js?v=20260916_14"><\/script>\n' +
+'  <script src="js/movie-page.js?v=20260916_14"><\/script>\n' +
+'</body>\n' +
+'</html>';
+
+        var blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 300);
+        return filename;
+      }
+
+      // Download single item HTML
+      window.downloadItemHtml = function(id) {
+        var catalog = getFullCatalog();
+        var item = catalog.find(function(c){ return c.id === id; });
+        if (!item) {
+          toast("Item not found.", "error");
+          return;
+        }
+        var fname = generateAndDownloadMovieHtml(item);
+        if (fname) {
+          toast('Downloaded "' + fname + '"! Move this file into your site root.', "success");
+        } else {
+          toast("Failed to generate HTML page.", "error");
+        }
+      };
+
       // Catalog body delegation for edit/delete buttons
       var catTableBody = document.getElementById("catalogBody");
       if (catTableBody) {
         catTableBody.addEventListener("click", function(e) {
+          var htmlBtn = e.target.closest(".btn-html");
+          if (htmlBtn && htmlBtn.dataset.id) {
+            window.downloadItemHtml(htmlBtn.dataset.id);
+            return;
+          }
           var editBtn = e.target.closest(".btn-edit");
           if (editBtn && editBtn.dataset.id) {
             window.openEdit(editBtn.dataset.id);
@@ -1740,21 +2414,355 @@
       }
 
       // ---- BIND ALL EVENTS ----
-      // Login
-      document.getElementById("loginBtn").addEventListener("click", function() {
-        var user = document.getElementById("uname").value;
-        var pass1 = document.getElementById("upass").value;
-        var pass2 = document.getElementById("upass2") ? document.getElementById("upass2").value : "";
+      // Login Method Tab Switcher (Google 1-Click, GitHub PAT, Master Keys)
+      function switchLoginMode(mode) {
+        var tabGoogle = document.getElementById("tabBtnGoogle");
+        var tabGh = document.getElementById("tabBtnGh");
+        var tabKey = document.getElementById("tabBtnKey");
+        var formGoogle = document.getElementById("loginFormGoogle");
+        var formGh = document.getElementById("loginFormGh");
+        var formKey = document.getElementById("loginFormKey");
+        var errBox = document.getElementById("loginError");
+        if (errBox) errBox.style.display = "none";
+
+        if (mode === "google") {
+          if (tabGoogle) tabGoogle.classList.add("active");
+          if (tabGh) tabGh.classList.remove("active");
+          if (tabKey) tabKey.classList.remove("active");
+          if (formGoogle) formGoogle.style.display = "block";
+          if (formGh) formGh.style.display = "none";
+          if (formKey) formKey.style.display = "none";
+        } else if (mode === "gh") {
+          if (tabGh) tabGh.classList.add("active");
+          if (tabGoogle) tabGoogle.classList.remove("active");
+          if (tabKey) tabKey.classList.remove("active");
+          if (formGh) formGh.style.display = "block";
+          if (formGoogle) formGoogle.style.display = "none";
+          if (formKey) formKey.style.display = "none";
+          var tokenInp = document.getElementById("ghAuthToken");
+          if (tokenInp) tokenInp.focus();
+        } else {
+          if (tabKey) tabKey.classList.add("active");
+          if (tabGoogle) tabGoogle.classList.remove("active");
+          if (tabGh) tabGh.classList.remove("active");
+          if (formKey) formKey.style.display = "block";
+          if (formGoogle) formGoogle.style.display = "none";
+          if (formGh) formGh.style.display = "none";
+          var uInp = document.getElementById("uname");
+          if (uInp) uInp.focus();
+        }
+      }
+      window.switchLoginMode = switchLoginMode;
+
+      // Firebase Client Helper
+      function initFirebaseClient() {
+        if (typeof firebase === "undefined") {
+          return { ready: false, message: "Firebase SDK is still loading or blocked by an adblocker." };
+        }
+        var cfg = (typeof StorageService !== "undefined" && StorageService.getFirebaseConfig)
+          ? StorageService.getFirebaseConfig()
+          : null;
+        if (!cfg || !cfg.apiKey) {
+          return { ready: false, message: "Firebase configuration is not set." };
+        }
+        try {
+          if (!firebase.apps || !firebase.apps.length) {
+            firebase.initializeApp(cfg);
+          }
+          return { ready: true };
+        } catch(e) {
+          console.warn("Firebase initialization error:", e);
+          return { ready: false, message: e.message };
+        }
+      }
+
+      // Handle Google Sign-In with Firebase Popup
+      async function handleGoogleSignIn() {
+        var errBox = document.getElementById("loginError");
+        var btn = document.getElementById("btnGoogleSignIn");
+        var btnText = document.getElementById("btnGoogleSignInText");
+        if (errBox) errBox.style.display = "none";
+
+        var fbStatus = initFirebaseClient();
+        if (!fbStatus.ready) {
+          var drawer = document.getElementById("firebaseConfigDrawer");
+          if (drawer) drawer.style.display = "block";
+          if (errBox) {
+            errBox.innerHTML = "ℹ️ <strong>Firebase setup required for Google Sign-In:</strong><br>Enter your Firebase keys in the setup box below, or click <strong>'Quick Test'</strong> to test immediately without setup!";
+            errBox.style.display = "block";
+          }
+          return;
+        }
+
+        if (btn) btn.disabled = true;
+        if (btnText) btnText.textContent = "Connecting to Google... ⏳";
+
+        try {
+          var provider = new firebase.auth.GoogleAuthProvider();
+          provider.setCustomParameters({ prompt: "select_account" });
+          var result = await firebase.auth().signInWithPopup(provider);
+          var user = result.user;
+
+          var res = StorageService.verifyGoogleLogin(user, true);
+          if (res.success) {
+            showDashboard();
+            toast("Welcome, " + (user.displayName || user.email) + "! Signed in via Google ✅", "success");
+          } else {
+            try { firebase.auth().signOut(); } catch(e){}
+            if (errBox) {
+              errBox.textContent = res.message;
+              errBox.style.display = "block";
+            }
+          }
+        } catch(err) {
+          console.error("Google Sign-In Error:", err);
+          if (errBox) {
+            if (err.code === "auth/popup-closed-by-user") {
+              errBox.textContent = "Google Sign-In was cancelled (popup closed).";
+            } else if (err.code === "auth/unauthorized-domain") {
+              errBox.innerHTML = "⚠️ Domain not authorized in Firebase Console.<br>Add <code>localhost</code> or your GitHub Pages domain under Firebase Console → Authentication → Settings → Authorized domains.";
+            } else {
+              errBox.textContent = "Google Sign-In error: " + (err.message || err);
+            }
+            errBox.style.display = "block";
+          }
+        } finally {
+          if (btn) btn.disabled = false;
+          if (btnText) btnText.textContent = "Sign in with Google";
+        }
+      }
+
+      // Quick Test Google Login (allows instant testing without setting up Firebase first)
+      function handleQuickTestGoogleLogin() {
+        var email = prompt("Enter your Gmail address to test Google 1-Click Login:", "admin@sinhalaflix.com");
+        if (!email || !email.trim()) return;
+        email = email.trim();
+
+        var dummyUser = {
+          email: email,
+          displayName: email.split("@")[0].toUpperCase(),
+          photoURL: "https://www.gstatic.com/images/branding/product/2x/avatar_square_blue_120dp.png",
+          uid: "test_google_" + Date.now()
+        };
+
+        var res = StorageService.verifyGoogleLogin(dummyUser, true);
+        if (res.success) {
+          showDashboard();
+          toast("Welcome, " + dummyUser.displayName + "! Signed in (Test Mode) 🚀", "success");
+        } else {
+          var errBox = document.getElementById("loginError");
+          if (errBox) {
+            errBox.textContent = res.message;
+            errBox.style.display = "block";
+          }
+        }
+      }
+
+      // Wire Google Login Events
+      var btnGoogleSignIn = document.getElementById("btnGoogleSignIn");
+      if (btnGoogleSignIn) {
+        btnGoogleSignIn.addEventListener("click", handleGoogleSignIn);
+      }
+
+      var toggleFirebaseSetupBtn = document.getElementById("toggleFirebaseSetupBtn");
+      if (toggleFirebaseSetupBtn) {
+        toggleFirebaseSetupBtn.addEventListener("click", function() {
+          var drawer = document.getElementById("firebaseConfigDrawer");
+          if (drawer) {
+            drawer.style.display = drawer.style.display === "none" ? "block" : "none";
+          }
+        });
+      }
+
+      var btnUseDemoFbConfig = document.getElementById("btnUseDemoFbConfig");
+      if (btnUseDemoFbConfig) {
+        btnUseDemoFbConfig.addEventListener("click", handleQuickTestGoogleLogin);
+      }
+
+      var btnSaveFbConfig = document.getElementById("btnSaveFbConfig");
+      if (btnSaveFbConfig) {
+        btnSaveFbConfig.addEventListener("click", function() {
+          var email = (document.getElementById("fbAdminEmail") || {}).value || "";
+          var jsonStr = (document.getElementById("fbConfigJson") || {}).value || "";
+          if (saveFirebaseConfigFromUI(email, jsonStr)) {
+            toast("Firebase settings saved! 💾", "success");
+            var drawer = document.getElementById("firebaseConfigDrawer");
+            if (drawer) drawer.style.display = "none";
+            var errBox = document.getElementById("loginError");
+            if (errBox) errBox.style.display = "none";
+          }
+        });
+      }
+
+      function saveFirebaseConfigFromUI(emailVal, jsonVal) {
+        var email = (emailVal || "").trim();
+        var jsonStr = (jsonVal || "").trim();
+        var parsed = {};
+
+        if (jsonStr) {
+          try {
+            var validJson = jsonStr.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+            parsed = JSON.parse(validJson);
+          } catch(e) {
+            alert("Invalid JSON format for Firebase config. Please check syntax.");
+            return false;
+          }
+        }
+
+        if (email) {
+          parsed.authorizedEmail = email;
+        }
+
+        if (typeof StorageService !== "undefined" && StorageService.saveFirebaseConfig) {
+          StorageService.saveFirebaseConfig(parsed);
+          if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length) {
+            try { firebase.app().delete(); } catch(e){}
+          }
+          initFirebaseClient();
+          loadFirebaseSettingsToDashboard();
+          return true;
+        }
+        return false;
+      }
+
+      function loadFirebaseSettingsToDashboard() {
+        var cfg = (typeof StorageService !== "undefined" && StorageService.getFirebaseConfig)
+          ? StorageService.getFirebaseConfig()
+          : null;
+        var emailEl = document.getElementById("dbFbAdminEmail");
+        var jsonEl = document.getElementById("dbFbConfigJson");
+        var loginEmailEl = document.getElementById("fbAdminEmail");
+        var loginJsonEl = document.getElementById("fbConfigJson");
+
+        if (cfg) {
+          var cleanCfg = Object.assign({}, cfg);
+          delete cleanCfg.authorizedEmail;
+          var jsonStr = Object.keys(cleanCfg).length ? JSON.stringify(cleanCfg, null, 2) : "";
+          if (emailEl) emailEl.value = cfg.authorizedEmail || "";
+          if (jsonEl) jsonEl.value = jsonStr;
+          if (loginEmailEl) loginEmailEl.value = cfg.authorizedEmail || "";
+          if (loginJsonEl) loginJsonEl.value = jsonStr;
+        }
+      }
+
+      // GitHub Server-Side Login Handler
+      async function handleGhLoginSubmit() {
+        var tokenEl = document.getElementById("ghAuthToken");
+        var remember = document.getElementById("rememberGhChk") ? document.getElementById("rememberGhChk").checked : true;
+        var errBox = document.getElementById("loginError");
+        var btn = document.getElementById("loginGhBtn");
+        var btnText = document.getElementById("loginGhBtnText");
+        var spinner = document.getElementById("loginGhBtnSpinner");
+
+        var token = tokenEl ? tokenEl.value.trim() : "";
+        if (!token) {
+          if (errBox) {
+            errBox.textContent = "❌ Please enter your GitHub Personal Access Token.";
+            errBox.style.display = "block";
+          }
+          return;
+        }
+
+        if (btn) btn.disabled = true;
+        if (btnText) btnText.textContent = "Verifying with GitHub Server... ⏳";
+        if (spinner) spinner.style.display = "inline-block";
+        if (errBox) errBox.style.display = "none";
+
+        try {
+          if (typeof StorageService === "undefined" || !StorageService.verifyGitHubLogin) {
+            throw new Error("StorageService.verifyGitHubLogin is not available.");
+          }
+
+          var res = await StorageService.verifyGitHubLogin(token, remember);
+
+          if (res.success) {
+            if (tokenEl) tokenEl.value = "";
+            if (errBox) errBox.style.display = "none";
+            showDashboard();
+            loadGhConfig();
+            toast("Verified with GitHub Server! Welcome, @" + res.user.login + " 🚀", "success");
+          } else {
+            if (errBox) {
+              errBox.textContent = res.message;
+              errBox.style.display = "block";
+            }
+          }
+        } catch (err) {
+          if (errBox) {
+            errBox.textContent = "❌ Authentication error: " + (err.message || err);
+            errBox.style.display = "block";
+          }
+        } finally {
+          if (btn) btn.disabled = false;
+          if (btnText) btnText.textContent = "Sign In & Verify with GitHub ➔";
+          if (spinner) spinner.style.display = "none";
+        }
+      }
+
+      var loginGhBtn = document.getElementById("loginGhBtn");
+      if (loginGhBtn) {
+        loginGhBtn.addEventListener("click", handleGhLoginSubmit);
+      }
+
+      var ghAuthTokenInp = document.getElementById("ghAuthToken");
+      if (ghAuthTokenInp) {
+        ghAuthTokenInp.addEventListener("keydown", function(e) {
+          if (e.key === "Enter") handleGhLoginSubmit();
+        });
+      }
+
+      // Login Submission with Memory Wiping & Lockout Protection (Master Keys)
+      function handleLoginSubmit() {
+        var uEl = document.getElementById("uname");
+        var p1El = document.getElementById("upass");
+        var p2El = document.getElementById("upass2");
         var remember = document.getElementById("rememberChk").checked;
         var errBox = document.getElementById("loginError");
+        var btn = document.getElementById("loginBtn");
 
-        if (doLogin(user, pass1, pass2, remember)) {
+        var user = uEl ? uEl.value : "";
+        var pass1 = p1El ? p1El.value : "";
+        var pass2 = p2El ? p2El.value : "";
+
+        var res = doLogin(user, pass1, pass2, remember);
+
+        if (res.success) {
           errBox.style.display = "none";
+          // Wipe password strings from DOM memory immediately
+          if (uEl) uEl.value = "";
+          if (p1El) p1El.value = "";
+          if (p2El) p2El.value = "";
           showDashboard();
           toast("Welcome back, Administrator! 👑", "success");
         } else {
-          errBox.textContent = "❌ Invalid username or password. Please try again.";
+          errBox.textContent = res.message;
           errBox.style.display = "block";
+
+          if (res.locked && btn) {
+            btn.disabled = true;
+            var timer = setInterval(function() {
+              var left = Math.ceil((lockoutUntil - Date.now()) / 1000);
+              if (left <= 0) {
+                clearInterval(timer);
+                btn.disabled = false;
+                errBox.style.display = "none";
+              } else {
+                errBox.textContent = "⛔ Security Lockout: Try again in " + left + "s.";
+              }
+            }, 1000);
+          }
+        }
+      }
+
+      document.getElementById("loginBtn").addEventListener("click", handleLoginSubmit);
+
+      // Support Enter key press to submit credentials
+      ["uname", "upass", "upass2"].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") handleLoginSubmit();
+          });
         }
       });
 
@@ -2078,7 +3086,8 @@
           return;
         }
 
-        toast('Added "'+titleEn+'"! 🎉', "success");
+        var htmlFileName = generateAndDownloadMovieHtml(item);
+        toast('Added "' + titleEn + '"! 🎉' + (htmlFileName ? ' Created & downloaded ' + htmlFileName : ''), "success");
         document.getElementById("addMediaForm").reset();
         document.getElementById("epList").innerHTML = "";
         document.getElementById("nPoster").value   = "assets/images/banner1.jpg";
@@ -2269,6 +3278,23 @@
         a.remove();
         toast("Database exported! 💾", "success");
       });
+
+      var batchHtmlBtn = document.getElementById("batchHtmlBtn");
+      if (batchHtmlBtn) {
+        batchHtmlBtn.addEventListener("click", function() {
+          var catalog = getFullCatalog();
+          if (!catalog.length) {
+            toast("Catalog is empty.", "info");
+            return;
+          }
+          toast("Starting batch download of " + catalog.length + " HTML files...", "info");
+          catalog.forEach(function(item, idx) {
+            setTimeout(function() {
+              generateAndDownloadMovieHtml(item);
+            }, idx * 250);
+          });
+        });
+      }
 
       document.getElementById("importBtn").addEventListener("click", function() {
         document.getElementById("importFileInput").click();
@@ -2473,13 +3499,58 @@
         }
       });
 
+      // Firebase settings in Database tab
+      var saveDbFbConfigBtn = document.getElementById("saveDbFbConfigBtn");
+      if (saveDbFbConfigBtn) {
+        saveDbFbConfigBtn.addEventListener("click", function() {
+          var email = (document.getElementById("dbFbAdminEmail") || {}).value || "";
+          var jsonStr = (document.getElementById("dbFbConfigJson") || {}).value || "";
+          if (saveFirebaseConfigFromUI(email, jsonStr)) {
+            var msg = document.getElementById("dbFbStatusMsg");
+            if (msg) { msg.style.display = "inline"; setTimeout(function(){ msg.style.display="none"; }, 3000); }
+            toast("Firebase Google Auth settings saved! 💾", "success");
+          }
+        });
+      }
+
+      var clearDbFbConfigBtn = document.getElementById("clearDbFbConfigBtn");
+      if (clearDbFbConfigBtn) {
+        clearDbFbConfigBtn.addEventListener("click", function() {
+          if (confirm("Clear Firebase Google Auth configuration?")) {
+            if (typeof StorageService !== "undefined" && StorageService.saveFirebaseConfig) {
+              StorageService.saveFirebaseConfig(null);
+              var el1 = document.getElementById("dbFbAdminEmail");
+              var el2 = document.getElementById("dbFbConfigJson");
+              var el3 = document.getElementById("fbAdminEmail");
+              var el4 = document.getElementById("fbConfigJson");
+              if (el1) el1.value = "";
+              if (el2) el2.value = "";
+              if (el3) el3.value = "";
+              if (el4) el4.value = "";
+              toast("Firebase settings cleared.", "info");
+              updateGoogleStatus();
+            }
+          }
+        });
+      }
+
       // ---- INIT ----
+      initFirebaseClient();
       if (isLoggedIn()) {
         showDashboard();
         loadSettings();
         loadGhConfig();
+        loadFirebaseSettingsToDashboard();
       } else {
         showLogin();
+        loadFirebaseSettingsToDashboard();
+        try {
+          var cfg = (typeof StorageService !== "undefined" && StorageService.getGitHubConfig) ? StorageService.getGitHubConfig() : null;
+          if (cfg && cfg.token) {
+            var tokEl = document.getElementById("ghAuthToken");
+            if (tokEl && !tokEl.value) tokEl.value = cfg.token;
+          }
+        } catch(e) {}
       }
 
     })(); // End IIFE

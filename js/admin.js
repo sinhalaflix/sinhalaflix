@@ -130,25 +130,21 @@ class AdminController {
     }
   }
 
-  fillAndLogin(user, pass1, pass2) {
-    const userIn = document.getElementById("adminUsername");
-    const passIn = document.getElementById("adminPassword");
-    const pass2In = document.getElementById("adminPassword2");
-    if (userIn) userIn.value = user;
-    if (passIn) passIn.value = pass1;
-    if (pass2In && pass2) pass2In.value = pass2;
-    this.handleLogin();
-  }
-
   handleLogin(e) {
     if (e && typeof e.preventDefault === "function") e.preventDefault();
-    const user = document.getElementById("adminUsername")?.value || "";
-    const pass = document.getElementById("adminPassword")?.value || "";
-    const pass2 = document.getElementById("adminPassword2")?.value || "";
+    const userEl = document.getElementById("adminUsername");
+    const passEl = document.getElementById("adminPassword");
+    const pass2El = document.getElementById("adminPassword2");
+    const user = userEl?.value || "";
+    const pass = passEl?.value || "";
+    const pass2 = pass2El?.value || "";
     const remember = document.getElementById("rememberAdmin")?.checked || false;
 
     const result = StorageService.adminLogin(user, pass, pass2, remember);
     if (result.success) {
+      if (userEl) userEl.value = "";
+      if (passEl) passEl.value = "";
+      if (pass2El) pass2El.value = "";
       if (this.loginErrorMsg) this.loginErrorMsg.style.display = "none";
       this.showDashboard();
       this.showToast("Welcome back, Administrator! 👑", "success");
@@ -158,6 +154,84 @@ class AdminController {
         this.loginErrorMsg.style.display = "block";
       } else {
         alert(result.message);
+      }
+    }
+  }
+
+  async handleGitHubLogin(e) {
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
+    const tokenEl = document.getElementById("ghAuthToken");
+    const token = tokenEl?.value || "";
+    const remember = document.getElementById("rememberGhChk")?.checked ?? true;
+    const btn = document.getElementById("loginGhBtn");
+    const btnText = document.getElementById("loginGhBtnText");
+    const spinner = document.getElementById("loginGhBtnSpinner");
+
+    if (!token) {
+      if (this.loginErrorMsg) {
+        this.loginErrorMsg.textContent = "Please enter your GitHub Personal Access Token.";
+        this.loginErrorMsg.style.display = "block";
+      }
+      return;
+    }
+
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.textContent = "Verifying with GitHub Server... ⏳";
+    if (spinner) spinner.style.display = "inline-block";
+
+    try {
+      const res = await StorageService.verifyGitHubLogin(token, remember);
+      if (res.success) {
+        if (tokenEl) tokenEl.value = "";
+        if (this.loginErrorMsg) this.loginErrorMsg.style.display = "none";
+        this.showDashboard();
+        this.showToast(`Verified & logged in as @${res.user.login}! 🚀`, "success");
+      } else {
+        if (this.loginErrorMsg) {
+          this.loginErrorMsg.textContent = res.message;
+          this.loginErrorMsg.style.display = "block";
+        }
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+      if (btnText) btnText.textContent = "Sign In & Verify with GitHub ➔";
+      if (spinner) spinner.style.display = "none";
+    }
+  }
+
+  async handleGoogleLogin() {
+    if (typeof firebase === "undefined") {
+      this.showToast("Firebase SDK not loaded.", "error");
+      return;
+    }
+    const cfg = StorageService.getFirebaseConfig();
+    if (!cfg || !cfg.apiKey) {
+      this.showToast("Please configure Firebase settings first.", "warning");
+      return;
+    }
+    try {
+      if (!firebase.apps || !firebase.apps.length) {
+        firebase.initializeApp(cfg);
+      }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      const result = await firebase.auth().signInWithPopup(provider);
+      const res = StorageService.verifyGoogleLogin(result.user, true);
+      if (res.success) {
+        this.showDashboard();
+        this.showToast(`Welcome, ${result.user.displayName || result.user.email}! Signed in via Google ✅`, "success");
+      } else {
+        try { firebase.auth().signOut(); } catch(e){}
+        if (this.loginErrorMsg) {
+          this.loginErrorMsg.textContent = res.message;
+          this.loginErrorMsg.style.display = "block";
+        }
+      }
+    } catch(err) {
+      console.error("Google login error:", err);
+      if (this.loginErrorMsg) {
+        this.loginErrorMsg.textContent = err.message || "Google sign-in failed.";
+        this.loginErrorMsg.style.display = "block";
       }
     }
   }

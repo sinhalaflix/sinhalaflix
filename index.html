@@ -20,9 +20,9 @@
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/main.css?v=20260913_8" />
-  <link rel="stylesheet" href="css/components.css?v=20260913_8" />
-  <link rel="stylesheet" href="css/responsive.css?v=20260913_8" />
+  <link rel="stylesheet" href="css/main.css?v=20260913_9" />
+  <link rel="stylesheet" href="css/components.css?v=20260916_10" />
+  <link rel="stylesheet" href="css/responsive.css?v=20260913_9" />
 </head>
 <body>
 
@@ -36,7 +36,7 @@
             <span>🎬</span>
           </div>
           <div class="brand-text">
-            <span class="brand-name">Sinhala<span style="color: #f59e0b;">Flix</span></span>
+            <span class="brand-name">Sinhala<span style="color: #f59e0b;">Flix Hub</span></span>
             <span class="brand-tagline">Cartoons • Movies • Teledramas • K-Dramas</span>
           </div>
         </a>
@@ -55,6 +55,8 @@
             <button id="btnClearSearch" class="search-clear-btn" title="Clear search">✕</button>
             <span class="search-kbd-hint">/</span>
           </div>
+          <!-- Live Search Suggestions Dropdown -->
+          <div class="search-suggestions-dropdown" id="searchSuggestionsDropdown" style="display: none;"></div>
         </div>
 
         <!-- Header Actions -->
@@ -84,7 +86,7 @@
   <!-- Mobile Navigation Drawer -->
   <div class="mobile-nav-drawer" id="mobileNavDrawer">
     <div class="drawer-header">
-      <span class="brand-name">Sinhala<span style="color:#f59e0b;">Flix</span></span>
+      <span class="brand-name">Sinhala<span style="color:#f59e0b;">Flix Hub</span></span>
       <button class="btn-close-modal" id="btnCloseMobileNav" aria-label="Close">✕</button>
     </div>
     <ul class="drawer-links">
@@ -176,13 +178,13 @@
             </div>
 
             <div class="sort-wrapper">
-              <span class="sort-label">Sort By:</span>
-              <select id="sortSelector" class="sort-select">
-                <option value="popular">🔥 Most Popular</option>
-                <option value="latest">📅 Latest Added</option>
-                <option value="rating">⭐ Highest Rated</option>
-                <option value="az">🔤 Title A - Z</option>
-              </select>
+              <span class="sort-label">Sort:</span>
+              <div class="sort-pills-list" id="sortPillsList">
+                <button class="sort-pill active" data-sort="popular">🔥 Most Popular</button>
+                <button class="sort-pill" data-sort="latest">📅 Latest Added</button>
+                <button class="sort-pill" data-sort="rating">⭐ Highest Rated</button>
+                <button class="sort-pill" data-sort="az">🔤 Title A - Z</button>
+              </div>
             </div>
           </div>
         </div>
@@ -383,6 +385,14 @@
         </label>
         <div class="download-quality-grid" id="downloadQualityGrid">
           <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Highlighted Ad Redirect Notice for Download -->
+        <div class="mp-ad-notice" style="margin-bottom: 1.25rem;">
+          <span class="mp-ad-notice-icon">🚨</span>
+          <div>
+            <strong>වැදගත්:</strong> වෙනත් සයිට් එකකට Redirect වුණොත් 🕒 තත්පර කිහිපයක් රැඳී සිට <strong>Back</strong> වී, ⬇️ <strong>Download Button</strong> එක නැවත Click කරන්න.
+          </div>
         </div>
 
         <!-- Download Mirrors List -->
@@ -715,7 +725,7 @@
         <div class="footer-brand">
           <div class="brand-logo">
             <div class="brand-icon-box"><span>🎬</span></div>
-            <span class="brand-name">Sinhala<span style="color: #f59e0b;">Flix</span></span>
+            <span class="brand-name">Sinhala<span style="color: #f59e0b;">Flix Hub</span></span>
           </div>
           <p>Sri Lanka's ultimate digital entertainment archive for Sinhala cartoons, Sinhala dubbed movies, legendary teledramas, and hit K-Dramas. Enjoy ultra-clear 1080p FHD &amp; 720p streaming and high-speed direct downloads.</p>
         </div>
@@ -747,11 +757,11 @@
   </footer>
 
   <!-- Javascript Modules -->
-  <script src="js/data.js?v=20260913_8"></script>
-  <script src="js/storage.js?v=20260913_8"></script>
-  <script src="js/player.js?v=20260913_8"></script>
-  <script src="js/download.js?v=20260913_8"></script>
-  <script src="js/content-manager.js?v=20260913_8"></script>
-  <script src="js/app.js?v=20260913_8"></script>
+  <script src="js/data.js?v=20260916_12"></script>
+  <script src="js/storage.js?v=20260916_12"></script>
+  <script src="js/player.js?v=20260916_12"></script>
+  <script src="js/download.js?v=20260916_12"></script>
+  <script src="js/content-manager.js?v=20260916_12"></script>
+  <script src="js/app.js?v=20260916_12"></script>
 </body>
 </html>

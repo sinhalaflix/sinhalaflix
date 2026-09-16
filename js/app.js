@@ -39,8 +39,11 @@ class SinhalaToonApp {
   initDOM() {
     this.searchInput = document.getElementById("mainSearchInput");
     this.clearSearchBtn = document.getElementById("btnClearSearch");
+    this.searchSuggestionsContainer = document.getElementById("searchSuggestionsDropdown");
+    this.activeSuggestionIndex = -1;
     this.categoryTabs = document.querySelectorAll(".category-tab-btn");
     this.channelPills = document.querySelectorAll(".channel-pill");
+    this.sortPills = document.querySelectorAll(".sort-pill");
     this.sortSelect = document.getElementById("sortSelector");
     this.catalogGrid = document.getElementById("catalogGrid");
     this.catalogCountDisplay = document.getElementById("catalogCountBadge");
@@ -62,24 +65,67 @@ class SinhalaToonApp {
   }
 
   bindGlobalEvents() {
-    // Search input with debounce
+    // Search input live suggestions (without removing media from catalog)
     let searchTimeout;
     this.searchInput?.addEventListener("input", (e) => {
       clearTimeout(searchTimeout);
-      this.searchQuery = e.target.value.trim().toLowerCase();
+      const val = e.target.value;
       if (this.clearSearchBtn) {
-        this.clearSearchBtn.style.display = this.searchQuery ? "block" : "none";
+        this.clearSearchBtn.style.display = val.trim() ? "block" : "none";
       }
       searchTimeout = setTimeout(() => {
-        this.renderCatalog();
-      }, 200);
+        this.renderSearchSuggestions(val);
+      }, 120);
+    });
+
+    this.searchInput?.addEventListener("focus", () => {
+      if (this.searchInput.value.trim()) {
+        this.renderSearchSuggestions(this.searchInput.value.trim());
+      }
+    });
+
+    this.searchInput?.addEventListener("keydown", (e) => {
+      const container = this.searchSuggestionsContainer || document.getElementById("searchSuggestionsDropdown");
+      if (!container || container.style.display === "none") return;
+
+      const items = container.querySelectorAll(".search-sug-item");
+      if (!items.length) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        this.activeSuggestionIndex = (this.activeSuggestionIndex + 1) % items.length;
+        items.forEach((item, idx) => item.classList.toggle("selected", idx === this.activeSuggestionIndex));
+        items[this.activeSuggestionIndex]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        this.activeSuggestionIndex = (this.activeSuggestionIndex - 1 + items.length) % items.length;
+        items.forEach((item, idx) => item.classList.toggle("selected", idx === this.activeSuggestionIndex));
+        items[this.activeSuggestionIndex]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (this.activeSuggestionIndex >= 0 && items[this.activeSuggestionIndex]) {
+          items[this.activeSuggestionIndex].click();
+        } else if (items[0]) {
+          items[0].click();
+        }
+      } else if (e.key === "Escape") {
+        container.style.display = "none";
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      const wrapper = document.querySelector(".header-search-wrapper");
+      if (wrapper && !wrapper.contains(e.target)) {
+        if (this.searchSuggestionsContainer) {
+          this.searchSuggestionsContainer.style.display = "none";
+        }
+      }
     });
 
     this.clearSearchBtn?.addEventListener("click", () => {
       if (this.searchInput) this.searchInput.value = "";
-      this.searchQuery = "";
       this.clearSearchBtn.style.display = "none";
-      this.renderCatalog();
+      this.renderSearchSuggestions("");
     });
 
     // Category Tabs
@@ -102,7 +148,17 @@ class SinhalaToonApp {
       });
     });
 
-    // Sorting selector
+    // Sorting pills (Quick-tap)
+    this.sortPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        this.sortPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.currentSort = pill.dataset.sort || "popular";
+        this.renderCatalog();
+      });
+    });
+
+    // Sorting selector (fallback)
     this.sortSelect?.addEventListener("change", (e) => {
       this.currentSort = e.target.value;
       this.renderCatalog();
@@ -271,7 +327,7 @@ class SinhalaToonApp {
       slide.className = `hero-slide ${idx === 0 ? "active" : ""}`;
       const catLabel = categoryLabelMap[item.category] || "🔥 Featured";
       const bgImg = item.backdrop || item.poster || "assets/images/banner1.jpg";
-      const safeTitleEn = (item.titleEnglish || "SinhalaFlix").replace(/"/g, "&quot;");
+      const safeTitleEn = (item.titleEnglish || "SinhalaFlix Hub").replace(/"/g, "&quot;");
       const safeTitleSi = item.titleSinhala || "";
       const yearStr = item.year ? `<span style="font-weight:400; font-size: 0.9em; opacity: 0.85;">${item.year}</span>` : "";
       const epCount = item.type === "series" ? `${item.episodes ? item.episodes.length : (item.episodesCount || 1)} Episodes` : (item.duration || "Full Movie");
@@ -408,18 +464,8 @@ class SinhalaToonApp {
       list = list.filter(item => item.channel === this.currentChannel);
     }
 
-    // Search Query Filter
-    if (this.searchQuery) {
-      const q = this.searchQuery;
-      list = list.filter(item => {
-        const titleEnMatch = item.titleEnglish && item.titleEnglish.toLowerCase().includes(q);
-        const titleSiMatch = item.titleSinhala && item.titleSinhala.toLowerCase().includes(q);
-        const singlishMatch = item.singlishKeywords && item.singlishKeywords.some(kw => kw.toLowerCase().includes(q));
-        const tagsMatch = item.tags && item.tags.some(t => t.toLowerCase().includes(q));
-        const directorMatch = item.director && item.director.toLowerCase().includes(q);
-        return titleEnMatch || titleSiMatch || singlishMatch || tagsMatch || directorMatch;
-      });
-    }
+    // Note: Search query does not remove media from the catalog grid.
+    // Matching media are displayed live inside the search bar dropdown instead.
 
     // Sorting
     const parseStat = (val, isCustom) => {
@@ -760,6 +806,141 @@ class SinhalaToonApp {
   copyShareLink() {
     navigator.clipboard?.writeText(window.location.href);
     this.showToast("Link copied to clipboard! 📋", "success");
+  }
+
+  escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  renderSearchSuggestions(rawQuery) {
+    const container = this.searchSuggestionsContainer || document.getElementById("searchSuggestionsDropdown");
+    if (!container) return;
+
+    const q = (rawQuery || "").trim().toLowerCase();
+    if (!q) {
+      container.style.display = "none";
+      container.innerHTML = "";
+      this.activeSuggestionIndex = -1;
+      return;
+    }
+
+    this.refreshCatalog();
+    const allItems = this.catalog || [];
+
+    const matches = allItems.filter(item => {
+      const titleEn = (item.titleEnglish || "").toLowerCase();
+      const titleSi = (item.titleSinhala || "").toLowerCase();
+      const singlish = Array.isArray(item.singlishKeywords) ? item.singlishKeywords.map(k => k.toLowerCase()) : [];
+      const tags = Array.isArray(item.tags) ? item.tags.map(t => t.toLowerCase()) : [];
+      const director = (item.director || "").toLowerCase();
+      const channel = (item.channel || "").toLowerCase();
+
+      return titleEn.includes(q) ||
+             titleSi.includes(q) ||
+             singlish.some(k => k.includes(q)) ||
+             tags.some(t => t.includes(q)) ||
+             director.includes(q) ||
+             channel.includes(q);
+    });
+
+    // Prioritize results: title starting with query first, then containing, then rating
+    matches.sort((a, b) => {
+      const aEn = (a.titleEnglish || "").toLowerCase();
+      const bEn = (b.titleEnglish || "").toLowerCase();
+      const aSi = (a.titleSinhala || "").toLowerCase();
+      const bSi = (b.titleSinhala || "").toLowerCase();
+
+      const aStarts = aEn.startsWith(q) || aSi.startsWith(q);
+      const bStarts = bEn.startsWith(q) || bSi.startsWith(q);
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+
+      const aIncludes = aEn.includes(q) || aSi.includes(q);
+      const bIncludes = bEn.includes(q) || bSi.includes(q);
+      if (aIncludes && !bIncludes) return -1;
+      if (!aIncludes && bIncludes) return 1;
+
+      return (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0);
+    });
+
+    const displayMatches = matches.slice(0, 8);
+    this.activeSuggestionIndex = -1;
+
+    const catBadgeMap = {
+      cartoons: "Cartoon",
+      movies: "Movie",
+      teledramas: "Teledrama",
+      kdramas: "K-Drama"
+    };
+
+    if (displayMatches.length === 0) {
+      container.innerHTML = `
+        <div class="search-sug-empty">
+          <div style="font-size: 1.4rem; margin-bottom: 0.35rem;">🔍</div>
+          <div>No media found matching "<strong>${this.escapeHTML(rawQuery)}</strong>"</div>
+          <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.35rem;">Check spelling or try searching by Sinhala / English name</div>
+        </div>
+      `;
+      container.style.display = "block";
+      return;
+    }
+
+    let html = `
+      <div class="search-sug-header">
+        <span>Available Media (${matches.length})</span>
+        <span>Click to Watch 🎬</span>
+      </div>
+    `;
+
+    displayMatches.forEach(item => {
+      const badge = catBadgeMap[item.category] || "Media";
+      const rating = item.rating ? `⭐ ${item.rating}` : "";
+      const year = item.year ? `${item.year}` : "";
+      const channel = item.channel || "";
+
+      html += `
+        <div class="search-sug-item" data-id="${this.escapeHTML(item.id)}" role="option">
+          <img 
+            src="${this.escapeHTML(item.poster || 'assets/posters/placeholder.jpg')}" 
+            alt="${this.escapeHTML(item.titleEnglish)}" 
+            class="search-sug-thumb" 
+            loading="lazy" 
+            onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'44\\' height=\\'60\\' fill=\\'%231a2236\\'><rect width=\\'100%\\' height=\\'100%\\'/></svg>'"
+          />
+          <div class="search-sug-info">
+            <div class="search-sug-title-en">${this.escapeHTML(item.titleEnglish)}</div>
+            <div class="search-sug-title-si">${this.escapeHTML(item.titleSinhala || '')}</div>
+            <div class="search-sug-meta">
+              <span class="search-sug-badge">${badge}</span>
+              <span>${this.escapeHTML(channel)}</span>
+              ${year ? `<span>• ${year}</span>` : ""}
+              ${rating ? `<span>• ${rating}</span>` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    container.style.display = "block";
+
+    // Click handler to open detail page immediately
+    const sugItems = container.querySelectorAll(".search-sug-item");
+    sugItems.forEach(elem => {
+      elem.addEventListener("click", () => {
+        const id = elem.getAttribute("data-id");
+        if (id) {
+          container.style.display = "none";
+          this.openDetail(id);
+        }
+      });
+    });
   }
 }
 

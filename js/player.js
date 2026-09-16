@@ -460,26 +460,93 @@ class VideoPlayerController {
     overlay.className = "mp-player-error-overlay";
 
     const sources = this.activeStreamSources || [];
-    const server1Idx = sources.findIndex(s => s && s.server && s.server.includes("1") && s.url && s.url.trim() !== "");
-    const rawExternal = url && (url.includes("buzzheavier.com") || url.includes("bzzhr.to") || url.startsWith("http")) ? url : "";
+    let server1Idx = sources.findIndex(s => s && s.server && s.server.toLowerCase().includes("1") && s.url && s.url.trim() !== "");
+    let server2Idx = sources.findIndex(s => s && s.server && s.server.toLowerCase().includes("2") && s.url && s.url.trim() !== "");
+
+    if (server1Idx === -1 && sources.length > 0) server1Idx = 0;
+    if (server2Idx === -1 && sources.length > 1) server2Idx = 1;
+
+    const currentIdx = typeof this.currentServerIndex === "number" ? this.currentServerIndex : 0;
+    const isServer1Current = (currentIdx === server1Idx);
+    const isServer2Current = (currentIdx === server2Idx);
+
+    // Target server: If server 1 not work switch server 2, if server 2 not work switch to 1
+    let targetIdx = -1;
+    let targetLabel = "";
+    if (isServer1Current && server2Idx > -1) {
+      targetIdx = server2Idx;
+      targetLabel = "Server 2";
+    } else if (isServer2Current && server1Idx > -1) {
+      targetIdx = server1Idx;
+      targetLabel = "Server 1";
+    } else if (server2Idx > -1 && server2Idx !== currentIdx) {
+      targetIdx = server2Idx;
+      targetLabel = "Server 2";
+    } else if (server1Idx > -1 && server1Idx !== currentIdx) {
+      targetIdx = server1Idx;
+      targetLabel = "Server 1";
+    }
+
+    const isServer2 = isServer2Current;
+    const errTitle = isServer2
+      ? "කිසිදු Server එකක් වැඩ නොකරන්නේ නම්, Video එක Download කර නරඹන්න."
+      : "Server 1 වැඩ නොකරන්නේ නම් Server 2 වෙත මාරු වන්න.";
+    const errDesc = isServer2
+      ? "If none of the servers are working, Download the video and watch it."
+      : "If Server 1 does not work, switch to Server 2.";
+
+    const actionBtnsHtml = !isServer2 && targetIdx > -1
+      ? `
+        <button type="button" class="btn-mp-switch" id="mainErrSwitchTargetBtn">▶ Switch to ${targetLabel}</button>
+        <button type="button" class="btn-mp-ext" id="mainErrDownloadBtn">⬇️ Download Video</button>
+        <button type="button" class="btn-mp-ext" id="mainErrRetryBtn">🔄 Retry</button>
+      `
+      : `
+        <button type="button" class="btn-mp-switch" id="mainErrDownloadBtn">⬇️ Download Video</button>
+        ${targetIdx > -1 ? `<button type="button" class="btn-mp-ext" id="mainErrSwitchTargetBtn">▶ Switch to ${targetLabel}</button>` : ""}
+        <button type="button" class="btn-mp-ext" id="mainErrRetryBtn">🔄 Retry</button>
+      `;
 
     overlay.innerHTML = `
       <div class="mp-err-icon">⚠️</div>
-      <h4 class="mp-err-title">Video Stream Unavailable In-Browser</h4>
-      <p class="mp-err-desc">This server link cannot be streamed directly inside the browser (it may be an external file locker page or expired token).</p>
+      <h4 class="mp-err-title">${errTitle}</h4>
+      <p class="mp-err-desc">${errDesc}</p>
       <div class="mp-err-actions">
-        ${server1Idx > -1 && server1Idx !== this.currentServerIndex ? `<button type="button" class="btn-mp-switch" id="mainErrSwitchBtn">▶ Switch to Server 1 (Google Drive)</button>` : ""}
-        ${rawExternal ? `<a href="${rawExternal}" target="_blank" rel="noopener noreferrer" class="btn-mp-ext">↗ Open Video Host Page</a>` : ""}
+        ${actionBtnsHtml}
       </div>
     `;
 
     wrap.appendChild(overlay);
 
-    const switchBtn = overlay.querySelector("#mainErrSwitchBtn");
-    if (switchBtn) {
-      switchBtn.addEventListener("click", () => {
+    const dlBtn = overlay.querySelector("#mainErrDownloadBtn");
+    if (dlBtn) {
+      dlBtn.addEventListener("click", () => {
+        if (window.DownloadHub && this.currentContent) {
+          window.DownloadHub.open(this.currentContent, this.currentEpisodeIndex || 0);
+        } else if (this.currentContent?.id) {
+          window.location.href = `download-wait.html?id=${this.currentContent.id}&ep=${this.currentEpisodeIndex || 0}`;
+        }
+      });
+    }
+
+    const switchTargetBtn = overlay.querySelector("#mainErrSwitchTargetBtn");
+    if (switchTargetBtn && targetIdx > -1) {
+      switchTargetBtn.addEventListener("click", () => {
         const btns = this.serverButtonsContainer ? this.serverButtonsContainer.querySelectorAll(".server-btn") : null;
-        if (btns && btns[server1Idx]) btns[server1Idx].click();
+        if (btns && btns[targetIdx]) {
+          btns[targetIdx].click();
+        } else {
+          this.currentServerIndex = targetIdx;
+          this.loadSource(true);
+        }
+      });
+    }
+
+    const retryBtn = overlay.querySelector("#mainErrRetryBtn");
+    if (retryBtn) {
+      retryBtn.addEventListener("click", () => {
+        this.hideErrorOverlay();
+        this.loadSource(true);
       });
     }
   }
@@ -572,7 +639,12 @@ class VideoPlayerController {
         console.warn("Video failed to load:", this.videoElement.src);
         this.showErrorOverlay(sourceUrl);
         if (window.App && typeof App.showToast === "function") {
-          App.showToast("⚠️ Video failed to load on this server. Please try switching servers.", "error");
+          const currentIdx = typeof this.currentServerIndex === "number" ? this.currentServerIndex : 0;
+          const isServer2 = (currentIdx === 1);
+          const msg = isServer2
+            ? "⚠️ කිසිදු Server එකක් වැඩ නොකරන්නේ නම්, Video එක Download කර නරඹන්න (If none of the servers are working, Download the video and watch it)"
+            : "⚠️ Server 1 වැඩ නොකරන්නේ නම් Server 2 වෙත මාරු වන්න (If Server 1 does not work, switch to Server 2)";
+          App.showToast(msg, "warning");
         }
       }
     };
