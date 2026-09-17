@@ -1,7 +1,7 @@
 /**
  * SinhalaFlix Hub - Dataset
  * Automatically Published via Admin Panel
- * Last Updated: 2026-09-17T17:03:15.882Z
+ * Last Updated: 2026-09-17T17:08:47.915Z
  */
 
 const INITIAL_CATALOG = [
@@ -71,7 +71,7 @@ const INITIAL_CATALOG = [
           }
         ],
         "downloads": {
-          "gdrive": "",
+          "gdrive": "https://drive.google.com/file/d/1LcvvuOlzDHCQJEA--0jPlnZ-_mCLLJZ0/view?usp=drive_link",
           "buzz": "https://ts.buzzheavier.com/d/wszlrkvdwbn6?v=3wGG6Vk0Ls_GYXFCxG-ABvJhZI0OHMvXyBSOQhuEKvHRIbHaPqvSxM_qmNS2U9be8lE2GcXgARUmWPrLzjBbBYZ6iMyYaRKsiA9Mn_uBCy4QlxhsvxcGF8fm6BTbhQZINt6INQNFLD7rGDt9pY6vnNK9suCw7LE025DxbS0lhaL_9ekkPtr9Wqigfaf2AR8ujibjo4Qv4TGuVbaKUcZeaA3_YpILNVLbAgLeg_gCFZE"
         }
       },
